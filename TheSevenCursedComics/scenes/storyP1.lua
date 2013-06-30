@@ -57,11 +57,11 @@ function scene:enterScene( event )
 	rain2.alpha = 0
 	transition.to( rain2, { time=1000, alpha=0.7 } )
 	
-	text = display.newText(dialogs["storyP1"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text = display.newText(dialogs["storyP1"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text:setTextColor(255,255,0)
 	transition.to( text, { time=5000, y = display.contentHeight / 0.85} )
 	
-	text2 = display.newText(dialogs["storyP1"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text2 = display.newText(dialogs["storyP1"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text2:setTextColor(0,0,0)
 	transition.to( text2, { time=5000, y = display.contentHeight / 0.85} )
 	

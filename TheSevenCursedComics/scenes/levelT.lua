@@ -15,9 +15,9 @@ function scene:createScene( event )
 	physics.start()
 	physics.setDrawMode("normal")	
 	
+	game:setGroup(group)
 	game:setPlayer(pSprite)
     group:insert(pSprite)
-	group:insert(game:loadUI())
 end
 scene:addEventListener( "createScene", scene )
 
@@ -25,6 +25,8 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	
+	group:insert(game:loadUI())
 	storyboard.purgeAll()
 end
 scene:addEventListener( "enterScene", scene )

@@ -1,12 +1,12 @@
 local storyboard = require( "storyboard" )
 ----------------------------------------------------------------------------------
-local lives
+local lives, gluttony = 3, 0
 local state
 local isMusicActive_, isSoundActive_ = true, true
 local isJumping = false
 local game = {}
 local font = "Free Pixel"
-local player
+local player, group, gl
 local speed = 250
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
@@ -48,6 +48,10 @@ end
 
 function game:getFont()
 	return font
+end
+
+function game:getFontSize()
+	return 45
 end
 
 function game:onUpdate(event)
@@ -120,7 +124,13 @@ end
 
 function onCollisionPlayer(event)
 	if event.phase == "began" then 
-		isJumping = false
+		if event.other.myName == "ground" then
+			isJumping = false
+		end
+		
+		if event.other.myName == "enemy" then
+			addDamage(1)
+		end	
 	end
 end
 
@@ -131,34 +141,43 @@ function game:setPlayer(pl)
 	
 	player:addEventListener("collision", onCollisionPlayer)
 	
-	--[[local rect = display.newRect(0,600,display.contentWidth, 100)
+	local rect = display.newRect(0,500,display.contentWidth, 100)
 	rect:setFillColor(50,0,0)
 	rect:toBack()
 	physics.addBody(rect, "static", {friction = 0.1 })
 	
+	rect.myName = "ground"
+	
 	local rect2 = display.newRect(300,0,50, 50)
 	rect2:setFillColor(50,0,0)
-	rect2:toFront()
-	physics.addBody(rect2, {bounce=0.2})]]
+	rect2:toBack()
+	physics.addBody(rect2, {bounce=0.2})
+	
+	rect2.myName = "enemy"
 	--player:setSequence("walk")
 	--player:play()
 end
 
+function game:setGroup(gr)
+	group = gr
+end
 function game:loadUI()
 	local group = display.newGroup()
 	
 	local lPad, rPad, sButton, jButton
 	local path = "assets/images/ui/"
 	
-	lpad = display.newImage(path.."lpad.png", 90, display.contentHeight - 30, 100,75)
+	lpad = display.newImage(path.."lpad.png", 90, display.contentHeight - 100, 100,75)
 	lpad.myName = "left"
-	rpad = display.newImage(path.."rpad.png", 310, display.contentHeight - 30, 100,75)	
+	rpad = display.newImage(path.."rpad.png", 310, display.contentHeight - 100, 100,75)	
 	rpad.myName = "right"
 	
-	sButton = display.newImage(path.."abutton.png", 800, display.contentHeight - 30, 75,75)
+	sButton = display.newImage(path.."abutton.png", 800, display.contentHeight - 100, 75,75)
 	sButton.myName = "a"
-	jButton = display.newImage(path.."bbutton.png", 950, display.contentHeight - 30, 75,75)	
+	jButton = display.newImage(path.."bbutton.png", 950, display.contentHeight - 100, 75,75)	
 	jButton.myName = "b"
+	
+	gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20, 347,175)
 	
 	lpad.touch = playerBehaviour
 	rpad.touch = playerBehaviour
@@ -174,12 +193,43 @@ function game:loadUI()
 	rpad:toFront()
 	sButton:toFront()
 	jButton:toFront()
+	gl:toFront()
 	
 	group:insert(lpad)
 	group:insert(rpad)
+	group:insert(sButton)
+	group:insert(jButton)
+	group:insert(gl)
 	return group
 end
 
+function addDamage(value)
+	local path = "assets/images/ui/"
+	
+	if gluttony <= 3 then
+		gluttony = gluttony + value
+		if gluttony >= 4 then
+			gluttony = 4
+			
+			if lives == 1 then
+				gameOver()
+			end
+			
+			lives = lives - 1
+		end
+		
+		if not gl then
+			gl:removeSelf()
+		end
+		gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20, 347,175)
+		gl:toFront()
+		group:insert(gl)
+	end
+end
+
+function gameOver()
+	display.newText("GameOver", (display.contentWidth / 2) - 100,100, game:getFont(), 30)
+end
 
 return game
 ----------------------------------------------------------------------------------

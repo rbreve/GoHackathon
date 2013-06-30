@@ -6,6 +6,7 @@
 
 local storyboard = require "storyboard"
 game = require("game.game")
+system.activate("multitouch")
 --physics = require("physics")
 display.setStatusBar(display.HiddenStatusBar)
 

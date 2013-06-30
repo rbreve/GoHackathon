@@ -4,7 +4,7 @@ application = {
 		--height = 480, 
 		width = 640,
 		height = 1136, 
-		scale = "letterBox",
+		scale = "zoomStretch",
 		fps = 30,
 		
 		--[[
