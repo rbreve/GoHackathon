@@ -17,6 +17,7 @@ local physics = require("physics")
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	
+	game:setPhysics(physics)
 	physics.start()
 	physics.setGravity(0, 40)
 	physics.setDrawMode("normal")
@@ -31,6 +32,7 @@ function scene:createScene( event )
 	bg:setFillColor(16,198,232)
 
 	local ground  = paralax.newParalax("images/ground.png", 610, 10)
+	
 	local clouds = paralax.newParalax("images/clouds.png", 150, 1)
 	local mountains = paralax.newParalax("images/mountains1.png", 530, 4)
 	
@@ -48,14 +50,15 @@ function scene:createScene( event )
 	
 
 	
-	local ground=display.newRect(0,560,display.contentWidth, display.contentHeight)
-	physics.addBody(ground,"static" ,{  density=1, friction=0.3 , bounce=0.4 })
-	ground.myName="ground"
+	local groundPhysics=display.newRect(0,560,display.contentWidth, display.contentHeight)
+	physics.addBody(groundPhysics,"static" ,{  density=1, friction=0.3 , bounce=0.4 })
+	groundPhysics.myName="ground"
 	
 	game:setGroup(group)
 	game:setState("normal")
 	
-	group:insert(ground)
+	group:insert(groundPhysics)
+	
 	
 	game:setScene("paralax")
 	group:insert(bg)
@@ -66,6 +69,7 @@ function scene:createScene( event )
 	game:setPlayer(dude)
 	
 	group:insert(dude)
+	group:insert(ground)
 	
 	group:insert(game:loadUI())
 	
@@ -73,17 +77,20 @@ function scene:createScene( event )
 	local moveY=3
 	
 	function moveEnemy()
+		paralax.setMoving(game:isMoving())
 		
-		enemy.y=enemy.y+moveY
-		enemy.x=enemy.x+2
+		if(enemy.y~=nil) then
+			enemy.y=enemy.y+moveY
+			enemy.x=enemy.x+2
 		
-		if (enemy.y>350 and moveY>0) then
-			moveY=-moveY
-		else if (enemy.y<250 and moveY<0) then
-			moveY=-moveY
+			if (enemy.y>350 and moveY>0) then
+				moveY=-moveY
+			else if (enemy.y<250 and moveY<0) then
+				moveY=-moveY
+			end
+			end
 		end
-		end
-		
+		 
 	end
 	
 	local dropBall = function()
@@ -113,7 +120,7 @@ function scene:createScene( event )
 	end
 	
 	Runtime:addEventListener( "enterFrame", moveEnemy )
-	timer.performWithDelay( 2000, dropBall, 20 )
+	--timer.performWithDelay( 2000, dropBall, 20 )
 	
 	
 end

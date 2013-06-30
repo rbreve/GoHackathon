@@ -11,7 +11,7 @@ local speed = 250
 local currentScene
 local hpSound, glSound, shootSound
 local enemies = {}
-local physics_
+local physics_, leftP, isMoving
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
 	--slideLeft (pushes original scene)
@@ -62,6 +62,14 @@ function game:getFontSize()
 	return 45
 end
 
+function game:setIsMoving(bool)
+	isMoving = bool
+end
+
+function game:isMoving()
+	return isMoving
+end
+
 function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
 	glSound = audio.loadSound("assets/sounds/bite.mp3")
@@ -93,6 +101,8 @@ function playerBehaviour(self, event)
 			player:setLinearVelocity(-speed, vy)
 			player:setSequence("walk")
 			player:play()
+			leftP = true
+			player.xScale = -1
 		end	
 		
 		if self.myName == "right" then
@@ -100,6 +110,8 @@ function playerBehaviour(self, event)
 			player:setLinearVelocity(speed, vy)
 			player:setSequence("walk")
 			player:play()
+			leftP = false
+			player.xScale = 1
 		end	
 		
 		if self.myName == "b" then
@@ -116,10 +128,20 @@ function playerBehaviour(self, event)
 				
 		if self.myName == "a" then
 			playPlayerShootSound()
-			local gum = display.newRect(player.x + 60, player.y - 50, 20, 20)
-			gum:setFillColor(255,150,150)
-			physics_.addBody(gum)
-			gum:applyLinearImpulse(0.1, -0.06, gum.x, gum.y )
+			
+			local gum
+			
+			if not leftP then
+				gum = display.newRect(player.x + 60, player.y - 50, 20, 20)
+				gum:setFillColor(255,150,150)
+				physics_.addBody(gum)
+				gum:applyLinearImpulse(0.1, -0.06, gum.x, gum.y )
+			else
+				gum = display.newRect(player.x - 100, player.y - 50, 20, 20)
+				gum:setFillColor(255,150,150)
+				physics_.addBody(gum)
+				gum:applyLinearImpulse(-0.1, -0.06, gum.x, gum.y )
+			end
 			gum.collision = onCollisionGum
 			gum:addEventListener("collision", gum)
 			group:insert(gum)
@@ -157,20 +179,40 @@ function onCollisionPlayer(event)
 		if event.other.myName == "food" then
 			playPlayerGLSound()
 			addGul(1)
+			createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
 			event.other:removeSelf()
 		end	
 	end
 end
 
+function createParticles(x, y, width, height)
+	for i = 0, 4, 1 do
+		local particle = display.newRect(x + math.random( -(width / 2), width ), math.random(y-40, y - 20), 10, 10)
+		particle:setFillColor(255,255,255)
+		physics_.addBody(particle)
+		--particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
+		group:insert(particle)
+		particle.myName = "particle"
+		--particle.collision = onCollisionParticle
+		--particle:addEventListener("collision", particle)
+	end
+end
+
 function onCollisionGum(self, event)
+	createParticles(self.x, self.y, self.width, self.height)
 	self:removeSelf()
-	
 	if event.other.myName == "enemy" then
 		event.other:removeSelf()
 	end
 	
 	if event.other.myName == "food" then
 		event.other:removeSelf()
+	end
+end
+
+function onCollisionParticle(self, event)
+	if event.other.myName ~= "particle" then
+		self:removeSelf()
 	end
 end
 
@@ -221,7 +263,7 @@ function game:loadUI()
 	jButton.myName = "b"
 	
 	gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20)
-	hpB = display.newImage(path.."power"..hp..".png", 450, 20)
+	hpB = display.newImage(path.."power"..hp..".png", 250, 20)
 	
 	lpad.touch = playerBehaviour
 	rpad.touch = playerBehaviour
@@ -289,7 +331,7 @@ function addDamage(value)
 	hp = hp - value
 	
 		hpB:removeSelf()
-		hpB = display.newImage(path.."power"..hp..".png", 450, 20)
+		hpB = display.newImage(path.."power"..hp..".png", 250, 20)
 		hpB:toFront()
 		group:insert(hpB)
 			

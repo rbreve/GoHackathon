@@ -1,9 +1,16 @@
 local backgrounds = {}
 
+
+
 local isMoving
+
+backgrounds.setMoving = function(bool)
+	isMoving=bool
+ end
 
 backgrounds.newParalax = function(imageName,  y, speed)
  
+ 	
  	local g = display.newGroup()
 	
 	local ground = display.newImage(imageName, display.contentWidth, display.contentHeight)
