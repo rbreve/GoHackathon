@@ -10,19 +10,49 @@ function prefabs:createBackground(r, g, b)
 	group:insert(background)
 end
 
-function prefabs:createPlatform(x, y)
+function prefabs:createPlatform(x, y, id)
+	local platform = display.newImage(path.."platform"..id..".png", x, y)
+	platform.myName = "ground"
+	local physics = game:getPhysics()
+	physics.addBody(platform, "static", {friction = 0.1 })
+
+	local group = game:getGroup()
+	group:insert(platform)
+end
+
+function prefabs:createClouds(x, y, id)
+	local clouds = display.newImage(path.."clouds"..id..".png", x, y)
+
+	local group = game:getGroup()
+	group:insert(clouds)
 end
 
 function prefabs:createDoor(x, y, nextScene)
-	local door = display.newImage(path.."exit_door.png", x, y)
-	door.myName = "door"
-	game:setNextScene(nextScene)
-	local physics = game:getPhysics()
-	physics.addBody(door, "kinematic")
-	local group = game:getGroup()
-	group:insert(door)
+	local options = {
+	   width = 136,
+	   height = 309,
+	   numFrames = 2
+	}
+	local doorSheet = graphics.newImageSheet(path.."exit_door.png", options)
+	local doorSprite
+	local sequenceData = {
+	   { name = "door", start=1, count=2, time=500,   loopCount=9999 }
+	}
 	
-	return door
+	doorSprite = display.newSprite(doorSheet, sequenceData)
+	doorSprite:setSequence("door")
+	doorSprite:play()
+	
+	doorSprite.myName = "door"
+	doorSprite.x = x; doorSprite.y = y
+	game:setNextScene(nextScene)
+
+	local physics = game:getPhysics()
+	physics.addBody(doorSprite, "kinematic")
+	local group = game:getGroup()
+	group:insert(doorSprite)
+	
+	return doorSprite
 end
 
 return prefabs

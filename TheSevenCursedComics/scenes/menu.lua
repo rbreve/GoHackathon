@@ -20,18 +20,22 @@ end
 function scene:createScene( event )
 	local group = self.view
 	
-	local play, options, buttonWidth, buttonHeight
+	local play, options, buttonWidth, buttonHeight, buttonWidthO, buttonHeightO
 	
-	buttonWidth = 100
-	buttonHeight = 30
+	buttonWidth = 212
+	buttonHeight = 89
+	
+	buttonWidthO = 348
+	buttonHeightO = 89
 	
 	local background = display.newImage("assets/images/backgrounds/portrait.png",0,0, display.contentWidth, display.contentHeight)
 	background:toBack()
 	group:insert(background)
 	
-	play = display.newRect((display.contentWidth / 2) - (buttonWidth / 2), (display.contentHeight / 1.5),buttonWidth,buttonHeight)
-	options = display.newRect((display.contentWidth / 2) - (buttonWidth / 2), (display.contentHeight / 1.5) + 40, buttonWidth, buttonHeight)
-	
+	play = display.newRect(87, 422,buttonWidth,buttonHeight)
+	options = display.newRect(308, 422, buttonWidthO, buttonHeightO)
+	play.alpha = 0.01
+	options.alpha = 0.01
 	play:addEventListener("touch", onPlay)
 	options:addEventListener("touch", onOptions)
 	group:insert(play)
