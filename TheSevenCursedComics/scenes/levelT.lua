@@ -11,7 +11,7 @@ function scene:createScene( event )
 	local group = self.view
 	
 	game:setGroup(group)
-	prefabs:createBackground(200,200,255)
+	prefabs:createBackground(16,198,232)
 	
 	local pSprite = player:loadPlayer(100,300, 50, 75)
 	
@@ -35,11 +35,16 @@ function scene:createScene( event )
 	prefabs:createPlatform(850,530, 2)
 	prefabs:createDoor(1024,200, "level1")
 	--prefabs:createDoor(200,200, "level1")
+	game:setPlayer(pSprite)
 	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
 	--Level Design
+	--Enemies
+		prefabs:createChocolateBat(400, 200, 2)
+		prefabs:createChocolateBat(650, 200, 2)
+		prefabs:createChocolateBat(800, 100, 2)
+	--Enemies
 	
 	game:setScene("levelT")
-	game:setPlayer(pSprite)
     group:insert(pSprite)
 end
 scene:addEventListener( "createScene", scene )

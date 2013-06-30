@@ -6,6 +6,7 @@ local scene = storyboard.newScene()
 ----------------------------------------------------------------------------------
 local function onPlay(event)
 	if event.phase == "began" then
+		stopBackgroundMusic()
 		game:transitionTo("storyP1", "slideDown", 1000)
 	end
 end
@@ -36,6 +37,9 @@ function scene:createScene( event )
 	options = display.newRect(308, 422, buttonWidthO, buttonHeightO)
 	play.alpha = 0.01
 	options.alpha = 0.01
+	stopBackgroundMusic()
+	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
+	
 	play:addEventListener("touch", onPlay)
 	options:addEventListener("touch", onOptions)
 	group:insert(play)

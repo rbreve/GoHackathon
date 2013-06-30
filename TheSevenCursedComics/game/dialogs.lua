@@ -72,6 +72,29 @@ dialogs["storyP4"] = function()
 	return text
 end
 
+dialogs["feedMe"] = function()
+	local text
+	
+	text = "¡Dame algo de comer, maldito insecto!"
+	
+	return text
+end
+
+dialogs["level1"] = function()
+	local text
+	
+	text = "¿Muercielagos de chocolate?, ¡debo intentar llegar a esa puerta!"
+	
+	return text
+end
+
+dialogs["level2"] = function()
+	local text
+	
+	text = "Esto es muy peligroso."
+	
+	return text
+end
 
 
 return dialogs
