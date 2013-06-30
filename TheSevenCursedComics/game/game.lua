@@ -62,7 +62,7 @@ end
 
 function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
-	glSound = nil
+	glSound = audio.loadSound("assets/sounds/bite.mp3")
 end
 
 function game:onUpdate(event)
@@ -227,12 +227,13 @@ end
 function addGul(value)
 	local path = "assets/images/ui/"
 	
+	gluttony = gluttony + value
+	
 		gl:removeSelf()
 		gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20)
 		gl:toFront()
 		group:insert(gl)
 			
-	gluttony = gluttony + value
 		if gluttony >= 4 then
 			gluttony = 4
 			
@@ -257,6 +258,7 @@ function addDamage(value)
 	local path = "assets/images/ui/"
 	
 	hp = hp - value
+	
 		hpB:removeSelf()
 		hpB = display.newImage(path.."power"..hp..".png", 450, 20)
 		hpB:toFront()
@@ -295,13 +297,13 @@ end
 
 function playPlayerDamageSound()
 	if game:isSoundActive() then
-		audio.play(hpSound, {channel=3, loops=1})
+		audio.play(hpSound, {channel=3, loops=0})
 	end
 end
 
 function playPlayerGLSound()
 	if game:isSoundActive() then
-		audio.play(glSound, {channel=3, loops=1})
+		audio.play(glSound, {channel=4, loops=0})
 	end
 end
 
