@@ -35,13 +35,13 @@ function scene:enterScene( event )
 	door.alpha = 0
 	transition.to( door, { time=1000, alpha=1 } )
 			
-	text = display.newText(dialogs["storyP2"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text = display.newText(dialogs["storyP2"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text:setTextColor(255,255,0)
-	transition.to( text, { time=5000, y = display.contentHeight / 0.84} )
+	transition.to( text, { time=5000, y = display.contentHeight / 0.85} )
 	
-	text2 = display.newText(dialogs["storyP2"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text2 = display.newText(dialogs["storyP2"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text2:setTextColor(0,0,0)
-	transition.to( text2, { time=5000, y = display.contentHeight / 0.84} )
+	transition.to( text2, { time=5000, y = display.contentHeight / 0.85} )
 			
 	group:insert(door)
 	group:insert(text2)

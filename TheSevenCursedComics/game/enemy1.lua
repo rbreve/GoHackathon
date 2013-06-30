@@ -3,8 +3,6 @@
 ----------------------------------------------------------------------------------
 local player = {}
 
-
-
 function player:loadPlayer(x, y, width, height)
 	local options = {
 	   width = 300,
@@ -23,6 +21,7 @@ function player:loadPlayer(x, y, width, height)
 	playerSprite:play()
 	
 	physics.addBody(playerSprite, "static", {bounce=0.2})
+	playerSprite.myName="enemy"
 	playerSprite.isFixedRotation = true
 	playerSprite.x = x; playerSprite.y = y
 	playerSprite.width = width; playerSprite.height = height

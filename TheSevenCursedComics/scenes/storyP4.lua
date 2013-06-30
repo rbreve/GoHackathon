@@ -22,11 +22,11 @@ function scene:createScene( event )
 	kid = display.newImageRect(path.."kid.jpg", display.contentWidth, display.contentHeight)
 	kid.x = (kid.width / 2); kid.y = (kid.height / 2)
 		
-	text = display.newText(dialogs["storyP4"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text = display.newText(dialogs["storyP4"](), 5, display.contentHeight, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text:setTextColor(255,255,0)
 	transition.to( text, { time=5000, y = display.contentHeight / 0.75} )
 	
-	text2 = display.newText(dialogs["storyP4"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), 20)
+	text2 = display.newText(dialogs["storyP4"](), 6, display.contentHeight +2, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text2:setTextColor(0,0,0)
 	transition.to( text2, { time=5000, y = display.contentHeight / 0.75} )
 	

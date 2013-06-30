@@ -2,7 +2,7 @@ local backgrounds = {}
 
  
 
-backgrounds.newParalax = function(imageName, y, speed)
+backgrounds.newParalax = function(imageName,  y, speed)
  
 	
  	local g = display.newGroup()
