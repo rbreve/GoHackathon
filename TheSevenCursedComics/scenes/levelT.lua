@@ -13,35 +13,29 @@ function scene:createScene( event )
 	game:setGroup(group)
 	prefabs:createBackground(200,200,255)
 	
-	local pSprite = player:loadPlayer(250,300, 50, 75)
+	local pSprite = player:loadPlayer(100,300, 50, 75)
 	
 	local physics = require "physics"	
 	game:setPhysics(physics)
 	physics.start()
 	physics.setGravity(0, 52)
 	physics.setDrawMode("normal")	
-		
-	--[[local rect = display.newRect(0,500,display.contentWidth, 100)
-	rect:setFillColor(50,0,0)
-	physics.addBody(rect, "static", {friction = 0.1 })
 	
-	rect.myName = "ground"
-	
-	local rect2 = display.newRect(450,0,50, 50)
-	rect2:setFillColor(50,0,0)
-	physics.addBody(rect2, {bounce=0.2})
-	
-	rect2.myName = "enemy"
-	
-	local rect3 = display.newRect(100,0,50, 50)
-	rect3:setFillColor(0,50,0)
-	physics.addBody(rect3, {bounce=0.2})
-	
-	rect3.myName = "food"
-	
-	group:insert(rect)
-	group:insert(rect2)
-	group:insert(rect3)]]--
+	--Level Design
+	prefabs:createClouds(100,100, 1)
+	prefabs:createPlatform(100,420, 1)
+	prefabs:createPlatform(100,600, 1)
+	prefabs:createPlatform(300,400, 2)
+	prefabs:createPlatform(300,540, 2)
+	prefabs:createPlatform(450,350, 1)
+	prefabs:createPlatform(450,540, 1)
+	prefabs:createPlatform(700,500, 2)
+	prefabs:createPlatform(700,650, 2)
+	prefabs:createPlatform(850,400, 2)
+	prefabs:createPlatform(850,530, 2)
+	prefabs:createDoor(1024,200, "level1")
+	--Level Design
+	playBackgroundMusic("Hustle.mp3")
 	
 	game:setState("normal")
 	game:setScene("levelT")

@@ -13,7 +13,7 @@ function player:loadPlayer(x, y, width, height)
 	local playerSprite
 	local sequenceData = {
 	   { name = "stand", start=1, count=1, time=0,   loopCount=1 },
-	   { name = "walk", start=1, count=2, time=200,   loopCount=9999 }
+	   { name = "walk", start=1, count=2, time=140,   loopCount=9999 }
 	}
 	
 	playerSprite = display.newSprite(playerSheet, sequenceData)

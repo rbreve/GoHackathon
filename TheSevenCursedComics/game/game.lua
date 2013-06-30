@@ -9,7 +9,7 @@ local font = "Free Pixel"
 local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
 local currentScene, nextScene
-local hpSound, glSound, shootSound
+local hpSound, glSound, shootSound, jumpSound
 local enemies = {}
 local physics_, leftP, isMoving, isPressedPad, isParalax
 ----------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ function game:isMoving()
 end
 
 function game:setIsParalax(bool)
-	isParalax = bool
+	isParalax = true
 end
 
 function game:getIsParalax()
@@ -76,6 +76,7 @@ function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
 	glSound = audio.loadSound("assets/sounds/bite.mp3")
 	shootSound= audio.loadSound("assets/sounds/shoot_MikeKoenig.mp3")
+	jumpSound= audio.loadSound("assets/sounds/Swoosh3SoundBible.com.mp3")
 end
 
 function onUpdate(event)
@@ -112,6 +113,9 @@ function playerBehaviour(self, event)
 			leftP = true
 			isPressedPad = true
 			isMoving = true
+			
+			lpad.alpha = 0.8
+			
 			player.xScale = -1
 		end	
 		
@@ -129,6 +133,9 @@ function playerBehaviour(self, event)
 			leftP = false
 			isPressedPad = true
 			isMoving = true
+			
+			rpad.alpha = 0.8
+			
 			player.xScale = 1
 		end	
 		
@@ -136,13 +143,16 @@ function playerBehaviour(self, event)
 			local vx, vy = player:getLinearVelocity()
 			
 			if not isJumping then
-				player:applyLinearImpulse( 0, -4, player.x, player.y )
+				playPlayerJumpSound()
+				player:applyLinearImpulse( 0, -1.5, player.x, player.y )
 				isJumping = true
 				player:setSequence("jump")
 				player:play()
 			end
 			--player:setSequence("stand")
 			--player:play()
+			
+			jButton.alpha = 0.8
 		end	
 		
 				
@@ -165,6 +175,8 @@ function playerBehaviour(self, event)
 			gum.collision = onCollisionGum
 			gum:addEventListener("collision", gum)
 			group:insert(gum)
+			
+			sButton.alpha = 0.8
 		end	
 	end
 	
@@ -176,6 +188,8 @@ function playerBehaviour(self, event)
 			player:play()
 			isPressedPad = false
 			isMoving = false
+			
+			lpad.alpha = 0.5
 		end	
 		
 		if self.myName == "right" then
@@ -185,8 +199,23 @@ function playerBehaviour(self, event)
 			player:play()
 			isPressedPad = false
 			isMoving = false
+			
+			rpad.alpha = 0.5
+		end
+		
+		if self.myName == "b" then
+			jButton.alpha = 0.5
+		end
+		
+		if self.myName == "a" then
+			sButton.alpha = 0.5
 		end
 	end
+end
+
+function game:eatFood()
+	playPlayerGLSound()
+	addGul(1)	
 end
 
 function onCollisionPlayer(event)
@@ -256,8 +285,10 @@ end
 
 function game:setPlayer(pl)
 	player = pl
-	physics.addBody(player, {bounce=0, shape = { -50,-100, 50,-100, 50,90, -50,90 }})
+
+	physics.addBody(player, {bounce=0, shape = { -15,-100, 15,-100, 15,105, -15,105 }})
 	player.myName="player"
+	
 	player.isFixedRotation = true
 	
 	isJumping = false
@@ -316,6 +347,11 @@ function game:loadUI()
 	sButton.myName = "a"
 	jButton = display.newImage(path.."bbutton.png", 950, display.contentHeight - 100, 75,75)	
 	jButton.myName = "b"
+	
+	lpad.alpha = 0.5
+	rpad.alpha = 0.5
+	sButton.alpha = 0.5
+	jButton.alpha = 0.5
 	
 	gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20)
 	hpB = display.newImage(path.."power"..hp..".png", 250, 20)
@@ -439,6 +475,23 @@ function playPlayerShootSound()
 		audio.stop({channel=5})
 		audio.play(shootSound, {channel=5, loops=0})
 	end
+end
+
+function playPlayerJumpSound()
+	if game:isSoundActive() then
+		audio.stop({channel=5})
+		audio.play(jumpSound, {channel=6, loops=0})
+	end
+end
+
+function playBackgroundMusic(name)
+	if game:isMusicActive() then
+		audio.play("assets/music/", {channel=1, loops=0})
+	end
+end
+
+function stopBackgroundMusic()
+		audio.stop({channel=1})
 end
 
 return game
