@@ -24,6 +24,11 @@ function scene:createScene( event )
 	
 	buttonWidth = 100
 	buttonHeight = 30
+	
+	local background = display.newImage("assets/images/backgrounds/portrait.png",0,0, display.contentWidth, display.contentHeight)
+	background:toBack()
+	group:insert(background)
+	
 	play = display.newRect((display.contentWidth / 2) - (buttonWidth / 2), (display.contentHeight / 1.5),buttonWidth,buttonHeight)
 	options = display.newRect((display.contentWidth / 2) - (buttonWidth / 2), (display.contentHeight / 1.5) + 40, buttonWidth, buttonHeight)
 	

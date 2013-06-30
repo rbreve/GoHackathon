@@ -20,8 +20,7 @@ function scene:createScene( event )
 	physics.start()
 	physics.setGravity(0, 52)
 	physics.setDrawMode("normal")	
-	
-	prefabs:createDoor(250, 500, "menu")	
+		
 	--[[local rect = display.newRect(0,500,display.contentWidth, 100)
 	rect:setFillColor(50,0,0)
 	physics.addBody(rect, "static", {friction = 0.1 })
