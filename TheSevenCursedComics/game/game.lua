@@ -8,10 +8,10 @@ local game = {}
 local font = "Free Pixel"
 local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
-local currentScene
+local currentScene, nextScene
 local hpSound, glSound, shootSound
 local enemies = {}
-local physics_, leftP, isMoving
+local physics_, leftP, isMoving, isPressedPad, isParalax
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
 	--slideLeft (pushes original scene)
@@ -64,6 +64,14 @@ function game:isMoving()
 	return isMoving
 end
 
+function game:setIsParalax(bool)
+	isParalax = bool
+end
+
+function game:getIsParalax()
+	return isParalax
+end
+
 function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
 	glSound = audio.loadSound("assets/sounds/bite.mp3")
@@ -92,23 +100,35 @@ function playerBehaviour(self, event)
 	if event.phase == "began"  and state == "normal" then
 		if self.myName == "left" then
 			local vx, vy = player:getLinearVelocity()
-			player:setLinearVelocity(-speed, vy)
+			
+			if not game:getIsParalax() then
+				player:setLinearVelocity(-speed, vy)
+			end
+			
 			if not isJumping then
 				player:setSequence("walk")
 				player:play()
 			end
 			leftP = true
+			isPressedPad = true
+			isMoving = true
 			player.xScale = -1
 		end	
 		
 		if self.myName == "right" then
 			local vx, vy = player:getLinearVelocity()
-			player:setLinearVelocity(speed, vy)
+			
+			if not game:getIsParalax() then
+				player:setLinearVelocity(speed, vy)
+			end
+			
 			if not isJumping then
 				player:setSequence("walk")
 				player:play()
 			end
 			leftP = false
+			isPressedPad = true
+			isMoving = true
 			player.xScale = 1
 		end	
 		
@@ -154,6 +174,8 @@ function playerBehaviour(self, event)
 			player:setLinearVelocity(0, vy)
 			player:setSequence("stand")
 			player:play()
+			isPressedPad = false
+			isMoving = false
 		end	
 		
 		if self.myName == "right" then
@@ -161,6 +183,8 @@ function playerBehaviour(self, event)
 			player:setLinearVelocity(0, vy)
 			player:setSequence("stand")
 			player:play()
+			isPressedPad = false
+			isMoving = false
 		end
 	end
 end
@@ -169,8 +193,14 @@ function onCollisionPlayer(event)
 	if event.phase == "began" and state == "normal" then 
 		if event.other.myName == "ground" then
 			isJumping = false
-			player:setSequence("stand")
-			player:play()
+			
+			if not isPressedPad then
+				player:setSequence("stand")
+				player:play()
+			else
+				player:setSequence("walk")
+				player:play()
+			end
 		end
 		
 		if event.other.myName == "enemy" then
@@ -184,6 +214,10 @@ function onCollisionPlayer(event)
 			createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
 			event.other:removeSelf()
 		end	
+		
+		if event.other.myName == "door" then
+			game:transitionTo(game:getNextScene(), "crossFade", 1000)
+		end
 	end
 end
 
@@ -192,7 +226,7 @@ function createParticles(x, y, width, height)
 		local particle = display.newRect(x + math.random( -(width / 2), width ), math.random(y-40, y - 20), 10, 10)
 		particle:setFillColor(255,255,255)
 		physics_.addBody(particle)
-		particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
+		--particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
 		group:insert(particle)
 		particle.myName = "particle"
 		--particle.collision = onCollisionParticle
@@ -233,6 +267,10 @@ function game:setGroup(gr)
 	group = gr
 end
 
+function game:getGroup()
+	return group
+end
+
 function game:setScene(sc)
 	currentScene = sc
 end
@@ -241,12 +279,24 @@ function game:getScene()
 	return currentScene
 end
 
+function game:setNextScene(scene_)
+	nextScene = scene_
+end
+
+function game:getNextScene()
+	return nextScene
+end
+
 function game:setState(tx)
 	state = tx
 end
 
 function game:setPhysics(py)
 	physics_ = py
+end
+
+function game:getPhysics()
+	return physics_
 end
 
 function game:loadUI()
