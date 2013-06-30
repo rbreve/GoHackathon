@@ -119,7 +119,7 @@ function playerBehaviour(self, event)
 			local gum = display.newRect(player.x + 60, player.y - 50, 20, 20)
 			gum:setFillColor(255,150,150)
 			physics_.addBody(gum)
-			gum:applyLinearImpulse(0.1, -0.08, gum.x, gum.y )
+			gum:applyLinearImpulse(0.1, -0.06, gum.x, gum.y )
 			gum.collision = onCollisionGum
 			gum:addEventListener("collision", gum)
 			group:insert(gum)
@@ -157,12 +157,21 @@ function onCollisionPlayer(event)
 		if event.other.myName == "food" then
 			playPlayerGLSound()
 			addGul(1)
+			event.other:removeSelf()
 		end	
 	end
 end
 
 function onCollisionGum(self, event)
 	self:removeSelf()
+	
+	if event.other.myName == "enemy" then
+		event.other:removeSelf()
+	end
+	
+	if event.other.myName == "food" then
+		event.other:removeSelf()
+	end
 end
 
 function game:setPlayer(pl)
