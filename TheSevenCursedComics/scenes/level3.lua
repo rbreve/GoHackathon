@@ -41,7 +41,6 @@ function scene:createScene( event )
 	
 	prefabs:createPlatform(0,display.contentHeight - 100, 3)
 	
-	prefabs:createDoor(1024,200, "menu")
 	playBackgroundMusic("Hustle.mp3")
 	--Level Design
 	game:setPlayer(pSprite)
@@ -76,7 +75,7 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	
+	prefabs:createDoor(1024,200, "menu")
 	group:insert(game:loadUI())
 	storyboard.purgeAll()
 end

@@ -34,7 +34,6 @@ function scene:createScene( event )
 	prefabs:createPlatform(700,650, 2)
 	prefabs:createPlatform(850,400, 2)
 	prefabs:createPlatform(850,530, 2)
-	prefabs:createDoor(1024,200, "level2")
 	--prefabs:createDoor(200,200, "level1")
 	game:setPlayer(pSprite)
 	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
@@ -74,7 +73,7 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	
+	prefabs:createDoor(1024,200, "level2")
 	group:insert(game:loadUI())
 	storyboard.purgeAll()
 end

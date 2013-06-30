@@ -378,7 +378,7 @@ function onCollisionGum(self, event)
 		
 	if string.match(event.other.myName, patt)  and event.other.myName ~= "burgers1" and event.other.myName ~= "burgers2" and event.other.myName ~= "burgers3" and event.other.myName ~= "burgers4" and event.other.myName ~= "burgers5" then
 		if tonumber(event.other.myName) > 1 then
-			event.other.myName = tonumber(event.other.myName) - 100
+			event.other.myName = tonumber(event.other.myName) - 1
 			print(event.other.myName)
 			
 			if tonumber(event.other.myName) < 1 then
@@ -604,8 +604,10 @@ function addDamage(value)
 	if hp <= 0 then
 			hp = 0
 	end
-	
-		hpB:removeSelf()
+		
+		if hpB ~= nil then
+			hpB:removeSelf()
+		end
 		hpB = display.newImage(path.."power"..hp..".png", 250, 20)
 		hpB:toFront()
 		group:insert(hpB)
