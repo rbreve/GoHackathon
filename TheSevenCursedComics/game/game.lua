@@ -179,7 +179,7 @@ function playerBehaviour(self, event)
 			
 			if not isJumping then
 				playPlayerJumpSound()
-				player:applyLinearImpulse( 0, -1.5, player.x, player.y )
+				player:applyLinearImpulse( 0, -2, player.x, player.y )
 				isJumping = true
 				player:setSequence("jump")
 				player:play()

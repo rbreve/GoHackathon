@@ -32,11 +32,11 @@ local function onMusicPressed(event)
 	if event.phase == "began" then
 		bMusic = not bMusic
 		if bMusic then
-			chkMusic = display.newRect(760, 75,  88, 88)
-			chkMusic:setFillColor(255,0,0,255)
+			chkMusic = display.newImage("assets/images/ui/hamburger_check.png",782, 95,  88, 88)
+			--chkMusic:setFillColor(255,0,0,255)
 		else
-			chkMusic = display.newRect(760, 75, 88, 88)
-			chkMusic:setFillColor(255,255,255,255)
+			chkMusic =  display.newImage("assets/images/ui/hamburger_check2.png",760, 75, 88, 88)
+			--chkMusic:setFillColor(255,255,255,0.1)
 		end
 		gGroup:insert(chkMusic)
 	end
@@ -46,11 +46,11 @@ local function onSoundPressed(event)
 	if event.phase == "began" then
 		 bSound = not bSound
 		if bSound then
-			chkSound = display.newRect(762,207, 88, 88)
-			chkSound:setFillColor(255,0,0,255)
+			chkSound = display.newImage("assets/images/ui/hamburger_check.png",784,227, 88, 88)
+			--chkSound:setFillColor(255,0,0,255)
 		else
-			chkSound = display.newRect(762,207, 88, 88)
-			chkSound:setFillColor(255,255,255,255)
+			chkSound =  display.newImage("assets/images/ui/hamburger_check2.png",762,207, 88, 88)
+			--chkSound:setFillColor(255,255,255,0.1)
 		end
 		gGroup:insert(chkSound)
 	end
@@ -84,19 +84,19 @@ function scene:createScene( event )
 	
 		
 	if bMusic then
-		chkMusic = display.newRect(760, 75, 88, 88)
-		chkMusic:setFillColor(255,0,0,255)
+		chkMusic = display.newImage("assets/images/ui/hamburger_check.png", 782, 95, 88, 88)
+		--chkMusic:setFillColor(255,0,0,255)
 	else
-		chkMusic = display.newRect(760, 75, 88, 88)
-		chkMusic:setFillColor(255,255,255,255)
+		chkMusic =  display.newImage("assets/images/ui/hamburger_check2.png",760, 75, 88, 88)
+		--chkMusic:setFillColor(255,255,255,0.1)
 	end
 	
 	if bSound then
-		chkSound = display.newRect(762,207, 88, 88)
-		chkSound:setFillColor(255,0,0,255)
+		chkSound = display.newImage("assets/images/ui/hamburger_check.png",784,227, 88, 88)
+		--chkSound:setFillColor(255,0,0,255)
 	else
-		chkSound = display.newRect(762,207, 88, 88)
-		chkSound:setFillColor(255,255,255,255)
+		chkSound =  display.newImage("assets/images/ui/hamburger_check2.png",762,207, 88, 88)
+		--chkSound:setFillColor(255,255,255,0.1)
 	end
 	
 	chkMusic:addEventListener("touch", onMusicPressed)

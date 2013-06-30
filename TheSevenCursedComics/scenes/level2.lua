@@ -19,7 +19,7 @@ function scene:createScene( event )
 	local physics = require "physics"	
 	game:setPhysics(physics)
 	physics.start()
-	physics.setGravity(0, 52)
+	physics.setGravity(0, 90)
 	physics.setDrawMode("normal")	
 	
 	--Level Design

@@ -19,7 +19,7 @@ function scene:createScene( event )
 	local physics = require "physics"	
 	game:setPhysics(physics)
 	physics.start()
-	physics.setGravity(0, 52)
+	physics.setGravity(0, 90)
 	physics.setDrawMode("normal")	
 	
 	--Level Design
@@ -45,7 +45,7 @@ function scene:createScene( event )
 	playBackgroundMusic("Hustle.mp3")
 	--Level Design
 	game:setPlayer(pSprite)
-	prefabs:createBurger(780,400, 500)
+	prefabs:createBurger(780,328, 500)
 	--Level Design
 	
 	local text = display.newText(dialogs["feedMe"](), 10, 110, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())

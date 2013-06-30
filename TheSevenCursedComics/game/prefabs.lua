@@ -116,7 +116,6 @@ function prefabs:createChocolateBat(x, y, hp)
 	
 	enemySprite.myName = hp
 	enemySprite.x = x; enemySprite.y = y
-	game:setNextScene(nextScene)
 	
 	local p = function()
 		local physics = game:getPhysics()
@@ -168,7 +167,6 @@ function prefabs:createBurger(x, y, hp)
 	
 	enemySprite.myName = hp
 	enemySprite.x = x; enemySprite.y = y
-	game:setNextScene(nextScene)
 	
 	local p = function()
 		local physics = game:getPhysics()
