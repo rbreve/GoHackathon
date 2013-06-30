@@ -9,7 +9,9 @@ local font = "Free Pixel"
 local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
 local currentScene
-local hpSound, glSound
+local hpSound, glSound, shootSound
+local enemies = {}
+local physics_
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
 	--slideLeft (pushes original scene)
@@ -63,9 +65,10 @@ end
 function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
 	glSound = audio.loadSound("assets/sounds/bite.mp3")
+	shootSound= audio.loadSound("assets/sounds/shoot_MikeKoenig.mp3")
 end
 
-function game:onUpdate(event)
+function onUpdate(event)
 	if state == "normal" then
 		physics.start()
 	end
@@ -112,7 +115,14 @@ function playerBehaviour(self, event)
 		
 				
 		if self.myName == "a" then
-			
+			playPlayerShootSound()
+			local gum = display.newRect(player.x + 60, player.y - 50, 20, 20)
+			gum:setFillColor(255,150,150)
+			physics_.addBody(gum)
+			gum:applyLinearImpulse(0.1, -0.08, gum.x, gum.y )
+			gum.collision = onCollisionGum
+			gum:addEventListener("collision", gum)
+			group:insert(gum)
 		end	
 	end
 	
@@ -151,6 +161,10 @@ function onCollisionPlayer(event)
 	end
 end
 
+function onCollisionGum(self, event)
+	self:removeSelf()
+end
+
 function game:setPlayer(pl)
 	player = pl
 	physics.addBody(player, {bounce=0, shape = { -50,-100, 50,-100, 50,90, -50,90 }})
@@ -159,8 +173,7 @@ function game:setPlayer(pl)
 	isJumping = false
 	
 	player:addEventListener("collision", onCollisionPlayer)
-	--player:setSequence("walk")
-	--player:play()
+	Runtime:addEventListener("enterFrame", onUpdate)
 end
 
 function game:setGroup(gr)
@@ -177,6 +190,10 @@ end
 
 function game:setState(tx)
 	state = tx
+end
+
+function game:setPhysics(py)
+	physics_ = py
 end
 
 function game:loadUI()
@@ -242,6 +259,7 @@ function addGul(value)
 			rpad:removeEventListener("touch", rpad)
 			sButton:removeEventListener("touch", sButton)
 			jButton:removeEventListener("touch", jButton)
+			Runtime:removeEventListener("enterFrame", onUpdate)
 			
 			if lives == 1 then
 				lives = lives - 1
@@ -272,6 +290,7 @@ function addDamage(value)
 			rpad:removeEventListener("touch", rpad)
 			sButton:removeEventListener("touch", sButton)
 			jButton:removeEventListener("touch", jButton)
+			Runtime:removeEventListener("enterFrame", onUpdate)
 			
 			if lives == 1 then
 				lives = lives - 1
@@ -304,6 +323,13 @@ end
 function playPlayerGLSound()
 	if game:isSoundActive() then
 		audio.play(glSound, {channel=4, loops=0})
+	end
+end
+
+function playPlayerShootSound()
+	if game:isSoundActive() then
+		audio.stop({channel=5})
+		audio.play(shootSound, {channel=5, loops=0})
 	end
 end
 

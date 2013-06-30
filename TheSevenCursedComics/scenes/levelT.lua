@@ -11,7 +11,8 @@ function scene:createScene( event )
 	local pSprite = player:loadPlayer(250,300, 50, 75)
 	
 	
-	local physics = require "physics"		
+	local physics = require "physics"	
+	game:setPhysics(physics)
 	physics.start()
 	physics.setGravity(0, 40)
 	physics.setDrawMode("normal")	
