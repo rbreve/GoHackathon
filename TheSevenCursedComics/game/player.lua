@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------
 --player.lua
 ----------------------------------------------------------------------------------
-local physics = require("physics")
 local player = {}
 
 function player:loadPlayer(x, y, width, height)
@@ -21,13 +20,9 @@ function player:loadPlayer(x, y, width, height)
 	playerSprite:setSequence("stand")
 	playerSprite:play()
 	
-	physics.addBody(playerSprite, "dynamic", {bounce=0.2, shape = { -50,0, 50,0, 50,24, -50,24 }})
-	playerSprite.isFixedRotation = true
 	playerSprite.x = x; playerSprite.y = y
 	playerSprite.width = width; playerSprite.height = height
-	
-	physics.start()
-	physics.setDrawMode("hybrid")
+
 	return playerSprite
 end
 

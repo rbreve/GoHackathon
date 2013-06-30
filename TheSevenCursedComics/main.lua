@@ -6,6 +6,7 @@
 
 local storyboard = require "storyboard"
 game = require("game.game")
+--physics = require("physics")
 display.setStatusBar(display.HiddenStatusBar)
 
 -- load scenetemplate.lua

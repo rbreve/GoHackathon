@@ -2,7 +2,6 @@
 
 local storyboard = require( "storyboard" )
 local player = require("game.player")
-local UI = require("game.ui")
 local scene = storyboard.newScene()
 ----------------------------------------------------------------------------------
 
@@ -11,8 +10,14 @@ function scene:createScene( event )
 	local group = self.view
 	local pSprite = player:loadPlayer(100,300, 50, 75)
 	
+	
+	local physics = require "physics"		
+	physics.start()
+	physics.setDrawMode("normal")	
+	
+	game:setPlayer(pSprite)
     group:insert(pSprite)
-	group:insert(UI:loadUI())
+	group:insert(game:loadUI())
 end
 scene:addEventListener( "createScene", scene )
 
