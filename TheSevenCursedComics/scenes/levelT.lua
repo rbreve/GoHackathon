@@ -2,28 +2,26 @@
 
 local storyboard = require( "storyboard" )
 local player = require("game.player")
+local prefabs = require("game.prefabs")
 local scene = storyboard.newScene()
 ----------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
-	local pSprite = player:loadPlayer(250,300, 50, 75)
 	
+	game:setGroup(group)
+	prefabs:createBackground(200,200,255)
+	
+	local pSprite = player:loadPlayer(250,300, 50, 75)
 	
 	local physics = require "physics"	
 	game:setPhysics(physics)
 	physics.start()
-	physics.setGravity(0, 40)
+	physics.setGravity(0, 52)
 	physics.setDrawMode("normal")	
-	
-	local background = display.newRect(0,0, display.contentWidth, display.contentHeight)
-	background:setFillColor(200,200,255)
-	background:toBack()
-	group:insert(background)
-	
 		
-	local rect = display.newRect(0,500,display.contentWidth, 100)
+	--[[local rect = display.newRect(0,500,display.contentWidth, 100)
 	rect:setFillColor(50,0,0)
 	physics.addBody(rect, "static", {friction = 0.1 })
 	
@@ -43,11 +41,10 @@ function scene:createScene( event )
 	
 	group:insert(rect)
 	group:insert(rect2)
-	group:insert(rect3)
+	group:insert(rect3)]]--
 	
 	game:setState("normal")
 	game:setScene("levelT")
-	game:setGroup(group)
 	game:setPlayer(pSprite)
     group:insert(pSprite)
 end
