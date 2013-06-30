@@ -1,47 +1,17 @@
 ----------------------------------------------------------------------------------
+--
+-- dummyScene.lua
+--
+----------------------------------------------------------------------------------
 
 local storyboard = require( "storyboard" )
-local player = require("game.player")
 local scene = storyboard.newScene()
+
 ----------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
-	local pSprite = player:loadPlayer(100,300, 50, 75)
-	
-	
-	local physics = require "physics"		
-	physics.start()
-	physics.setGravity(0, 40)
-	physics.setDrawMode("normal")	
-	
-	local background = display.newRect(0,0, display.contentWidth, display.contentHeight)
-	background:setFillColor(200,200,255)
-	background:toBack()
-	group:insert(background)
-	
-		
-	local rect = display.newRect(0,500,display.contentWidth, 100)
-	rect:setFillColor(50,0,0)
-	physics.addBody(rect, "static", {friction = 0.1 })
-	
-	rect.myName = "ground"
-	
-	local rect2 = display.newRect(300,0,50, 50)
-	rect2:setFillColor(50,0,0)
-	physics.addBody(rect2, {bounce=0.2})
-	
-	rect2.myName = "enemy"
-	
-	group:insert(rect)
-	group:insert(rect2)
-	
-	game:setState("normal")
-	game:setScene("levelT")
-	game:setGroup(group)
-	game:setPlayer(pSprite)
-    group:insert(pSprite)
 end
 scene:addEventListener( "createScene", scene )
 
@@ -49,9 +19,8 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	
-	group:insert(game:loadUI())
 	storyboard.purgeAll()
+	game:transitionTo(game:getScene(), "crossFade", 500)
 end
 scene:addEventListener( "enterScene", scene )
 

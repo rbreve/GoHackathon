@@ -1,13 +1,15 @@
 local storyboard = require( "storyboard" )
 ----------------------------------------------------------------------------------
-local lives, gluttony = 3, 0
+local lives, gluttony, hp = 1, 0, 4
 local state
 local isMusicActive_, isSoundActive_ = true, true
 local isJumping = false
 local game = {}
 local font = "Free Pixel"
-local player, group, gl
+local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
+local currentScene
+local hpSound, glSound
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
 	--slideLeft (pushes original scene)
@@ -22,6 +24,10 @@ function game:transitionTo(sceneName, effectT, timeT)
 	}
 	
 	storyboard.gotoScene("scenes."..sceneName, options)
+end
+
+function game:resetScene()
+	game:transitionTo("dummyScene", "crossFade", 500)
 end
 
 function game:gameOnUpdate()
@@ -54,9 +60,14 @@ function game:getFontSize()
 	return 45
 end
 
+function game:loadResources()
+	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
+	glSound = nil
+end
+
 function game:onUpdate(event)
 	if state == "normal" then
-	
+		physics.start()
 	end
 	
 	if state == "cutScene" then
@@ -64,7 +75,7 @@ function game:onUpdate(event)
 	end
 	
 	if state == "pause" then
-	
+		physics.pause()
 	end
 	
 	if state == "dead" then
@@ -73,7 +84,7 @@ function game:onUpdate(event)
 end
 
 function playerBehaviour(self, event)
-	if event.phase == "began" then
+	if event.phase == "began"  and state == "normal" then
 		if self.myName == "left" then
 			local vx, vy = player:getLinearVelocity()
 			player:setLinearVelocity(-speed, vy)
@@ -92,7 +103,7 @@ function playerBehaviour(self, event)
 			local vx, vy = player:getLinearVelocity()
 			
 			if not isJumping then
-				player:applyLinearImpulse( 0, -1.5, player.x, player.y )
+				player:applyLinearImpulse( 0, -4, player.x, player.y )
 				isJumping = true
 			end
 			--player:setSequence("stand")
@@ -105,7 +116,7 @@ function playerBehaviour(self, event)
 		end	
 	end
 	
-	if event.phase == "ended" then
+	if event.phase == "ended" and state == "normal" then
 		if self.myName == "left" then
 			local vx, vy = player:getLinearVelocity()
 			player:setLinearVelocity(0, vy)
@@ -123,13 +134,19 @@ function playerBehaviour(self, event)
 end
 
 function onCollisionPlayer(event)
-	if event.phase == "began" then 
+	if event.phase == "began" and state == "normal" then 
 		if event.other.myName == "ground" then
 			isJumping = false
 		end
 		
 		if event.other.myName == "enemy" then
+			playPlayerDamageSound()
 			addDamage(1)
+		end	
+		
+		if event.other.myName == "food" then
+			playPlayerGLSound()
+			addGul(1)
 		end	
 	end
 end
@@ -139,21 +156,9 @@ function game:setPlayer(pl)
 	physics.addBody(player, {bounce=0, shape = { -50,-100, 50,-100, 50,90, -50,90 }})
 	player.isFixedRotation = true
 	
+	isJumping = false
+	
 	player:addEventListener("collision", onCollisionPlayer)
-	
-	local rect = display.newRect(0,500,display.contentWidth, 100)
-	rect:setFillColor(50,0,0)
-	rect:toBack()
-	physics.addBody(rect, "static", {friction = 0.1 })
-	
-	rect.myName = "ground"
-	
-	local rect2 = display.newRect(300,0,50, 50)
-	rect2:setFillColor(50,0,0)
-	rect2:toBack()
-	physics.addBody(rect2, {bounce=0.2})
-	
-	rect2.myName = "enemy"
 	--player:setSequence("walk")
 	--player:play()
 end
@@ -161,10 +166,22 @@ end
 function game:setGroup(gr)
 	group = gr
 end
+
+function game:setScene(sc)
+	currentScene = sc
+end
+
+function game:getScene()
+	return currentScene
+end
+
+function game:setState(tx)
+	state = tx
+end
+
 function game:loadUI()
 	local group = display.newGroup()
-	
-	local lPad, rPad, sButton, jButton
+
 	local path = "assets/images/ui/"
 	
 	lpad = display.newImage(path.."lpad.png", 90, display.contentHeight - 100, 100,75)
@@ -177,7 +194,8 @@ function game:loadUI()
 	jButton = display.newImage(path.."bbutton.png", 950, display.contentHeight - 100, 75,75)	
 	jButton.myName = "b"
 	
-	gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20, 347,175)
+	gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20)
+	hpB = display.newImage(path.."power"..hp..".png", 450, 20)
 	
 	lpad.touch = playerBehaviour
 	rpad.touch = playerBehaviour
@@ -194,41 +212,97 @@ function game:loadUI()
 	sButton:toFront()
 	jButton:toFront()
 	gl:toFront()
+	hpB:toFront()
 	
 	group:insert(lpad)
 	group:insert(rpad)
 	group:insert(sButton)
 	group:insert(jButton)
 	group:insert(gl)
+	group:insert(hpB)
+	
 	return group
+end
+
+function addGul(value)
+	local path = "assets/images/ui/"
+	
+		gl:removeSelf()
+		gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20)
+		gl:toFront()
+		group:insert(gl)
+			
+	gluttony = gluttony + value
+		if gluttony >= 4 then
+			gluttony = 4
+			
+			player:removeEventListener("collision", onCollisionPlayer)
+			lpad:removeEventListener("touch", lpad)
+			rpad:removeEventListener("touch", rpad)
+			sButton:removeEventListener("touch", sButton)
+			jButton:removeEventListener("touch", jButton)
+			
+			if lives == 1 then
+				lives = lives - 1
+				gameOver()
+			else			
+				lives = lives - 1
+				gluttony = 0
+				game:resetScene()
+			end
+		end
 end
 
 function addDamage(value)
 	local path = "assets/images/ui/"
 	
-	if gluttony <= 3 then
-		gluttony = gluttony + value
-		if gluttony >= 4 then
-			gluttony = 4
+	hp = hp - value
+		hpB:removeSelf()
+		hpB = display.newImage(path.."power"..hp..".png", 450, 20)
+		hpB:toFront()
+		group:insert(hpB)
+			
+		if hp <= 0 then
+			hp = 0
+			
+			player:removeEventListener("collision", onCollisionPlayer)
+			lpad:removeEventListener("touch", lpad)
+			rpad:removeEventListener("touch", rpad)
+			sButton:removeEventListener("touch", sButton)
+			jButton:removeEventListener("touch", jButton)
 			
 			if lives == 1 then
+				lives = lives - 1
 				gameOver()
+			else			
+				lives = lives - 1
+				hp = 4
+				game:resetScene()
 			end
-			
-			lives = lives - 1
 		end
-		
-		if not gl then
-			gl:removeSelf()
-		end
-		gl = display.newImage(path.."gluttony"..gluttony..".png", 20, 20, 347,175)
-		gl:toFront()
-		group:insert(gl)
-	end
 end
 
 function gameOver()
-	display.newText("GameOver", (display.contentWidth / 2) - 100,100, game:getFont(), 30)
+	local tx = display.newText("GameOver", (display.contentWidth / 2) - 100,100, game:getFont(), 30)
+	--reset stats
+	gluttony = 0
+	hp = 4
+	lives = 1
+	
+	game:transitionTo("menu", zoomInOutFade, 2000)
+	tx:removeSelf()
+end
+
+function playPlayerDamageSound()
+	if game:isSoundActive() then
+		audio.play(hpSound, {channel=3, loops=1})
+	end
+end
+
+function playPlayerGLSound()
+	if game:isSoundActive() then
+		audio.play(glSound, {channel=3, loops=1})
+	end
 end
 
 return game
