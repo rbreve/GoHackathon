@@ -20,7 +20,7 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	
+	storyboard.purgeAll()
 end
 scene:addEventListener( "enterScene", scene )
 
