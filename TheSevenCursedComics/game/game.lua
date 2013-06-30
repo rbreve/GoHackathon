@@ -472,7 +472,14 @@ function playPlayerJumpSound()
 	end
 end
 
-function playBackgroundMusic()
+function playBackgroundMusic(name)
+	if game:isMusicActive() then
+		audio.play("assets/music/", {channel=1, loops=0})
+	end
+end
+
+function stopBackgroundMusic()
+		audio.stop({channel=1})
 end
 
 return game

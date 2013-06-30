@@ -35,6 +35,7 @@ function scene:createScene( event )
 	prefabs:createPlatform(850,530, 2)
 	prefabs:createDoor(1024,200, "level1")
 	--Level Design
+	playBackgroundMusic("Hustle.mp3")
 	
 	game:setState("normal")
 	game:setScene("levelT")
