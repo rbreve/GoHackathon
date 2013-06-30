@@ -31,7 +31,6 @@ function scene:createScene( event )
 	bg:setFillColor(16,198,232)
 
 	local ground  = paralax.newParalax("images/ground.png", 610, 10)
-
 	local clouds = paralax.newParalax("images/clouds.png", 150, 1)
 	local mountains = paralax.newParalax("images/mountains1.png", 530, 4)
 	
@@ -88,14 +87,27 @@ function scene:createScene( event )
 	end
 	
 	local dropBall = function()
+		
+		local color=math.random(1,3)
+		local colorName="blue"
+		
+		if (color==2) then
+			colorName="pink"
+		end
+		
+		
+		if (color==3) then
+			colorName="yellow"
+		end
+		
 		local physicsData = (require "assets.images.objects.blue_gumS").physicsData(1)
-		local ball = display.newImage("assets/images/objects/blue_gumS.png")
+		local ball = display.newImage("assets/images/objects/"..colorName.."_gumS.png")
 		physics.addBody( ball, physicsData:get("blue_gumS") )
 		ball.isFixedRotation=false
 		ball.x=1300
 		ball.y=300
 		ball.myName="food"
-		ball:applyForce(-4000,2000,ball.x-10, ball.y-10)
+		ball:applyForce(-3000,2000,ball.x-10, ball.y-10)
 		group:insert(ball)
 		
 	end
@@ -130,6 +142,7 @@ function scene:destroyScene( event )
 	local group = self.view
 	Runtime:removeEventListener( "enterFrame", moveBackground )
 	Runtime:removeEventListener( "enterFrame", moveEnemy )
+	Runtime:removeEventListener( "enterFrame", moveBackground )
 	
 	
 end

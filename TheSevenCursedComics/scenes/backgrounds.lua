@@ -1,10 +1,9 @@
 local backgrounds = {}
 
- 
+local isMoving
 
 backgrounds.newParalax = function(imageName,  y, speed)
  
-	
  	local g = display.newGroup()
 	
 	local ground = display.newImage(imageName, display.contentWidth, display.contentHeight)
@@ -28,11 +27,10 @@ backgrounds.newParalax = function(imageName,  y, speed)
 			ground2.x = initX
 		end
 		
-	
-		
-		ground2.x=ground2.x-speed
-		ground.x=ground.x-speed
-		
+		if(isMoving) then
+			ground2.x=ground2.x-speed
+			ground.x=ground.x-speed
+		end
 	end
 
 	
