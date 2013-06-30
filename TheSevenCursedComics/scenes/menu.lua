@@ -15,6 +15,20 @@ local function onOptions(event)
 		game:transitionTo("options", "slideLeft", 1000)
 	end
 end
+
+local function onLevel1(event)
+	if event.phase == "began" then
+		game:transitionTo("boss", "crossFade", 500)
+	end
+end
+
+local function onLevel2(event)
+	if event.phase == "began" then
+		game:transitionTo("levelT", "crossFade", 500)
+	end
+end
+
+
 ----------------------------------------------------------------------------------
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
@@ -34,12 +48,25 @@ function scene:createScene( event )
 	
 	play = display.newRect(87, 422,buttonWidth,buttonHeight)
 	options = display.newRect(308, 422, buttonWidthO, buttonHeightO)
+	local level1 =  display.newRect(87, 565,179,46)
+	local level2 =  display.newRect(356, 565,179,46)
+	
 	play.alpha = 0.01
 	options.alpha = 0.01
+	level1.alpha=0.01
+	level2.alpha=0.01
+		
 	play:addEventListener("touch", onPlay)
 	options:addEventListener("touch", onOptions)
+	level1:addEventListener("touch", onLevel1)
+	level2:addEventListener("touch", onLevel2)
+	
+	
 	group:insert(play)
 	group:insert(options)
+	group:insert(level1)
+	group:insert(level2)
+
 end
 scene:addEventListener( "createScene", scene )
 

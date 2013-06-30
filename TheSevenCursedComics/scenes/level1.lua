@@ -13,7 +13,7 @@ function scene:createScene( event )
 	game:setGroup(group)
 	prefabs:createBackground(200,200,255)
 	
-	local pSprite = player:loadPlayer(100,300, 50, 75)
+	local pSprite = player:loadPlayer(50,200, 50, 75)
 	
 	local physics = require "physics"	
 	game:setPhysics(physics)
@@ -23,20 +23,20 @@ function scene:createScene( event )
 	
 	--Level Design
 	prefabs:createClouds(100,100, 1)
-	prefabs:createPlatform(100,420, 1)
-	prefabs:createPlatform(100,600, 1)
-	prefabs:createPlatform(300,400, 2)
-	prefabs:createPlatform(300,540, 2)
-	prefabs:createPlatform(450,350, 1)
-	prefabs:createPlatform(450,540, 1)
-	prefabs:createPlatform(700,500, 2)
-	prefabs:createPlatform(700,650, 2)
+	prefabs:createPlatform(50,300, 1)
+	prefabs:createPlatform(50,480, 1)
+	prefabs:createPlatform(310,500, 2)
+	prefabs:createPlatform(300,650, 2)
+	prefabs:createPlatform(450,450, 1)
+	prefabs:createPlatform(450,650, 1)
+	prefabs:createPlatform(700,420, 2)
+	prefabs:createPlatform(700,550, 2)
 	prefabs:createPlatform(850,400, 2)
 	prefabs:createPlatform(850,530, 2)
 	prefabs:createDoor(1024,200, "levelT")
+	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
 	--Level Design
 	
-	game:setState("normal")
 	game:setScene("levelT")
 	game:setPlayer(pSprite)
     group:insert(pSprite)

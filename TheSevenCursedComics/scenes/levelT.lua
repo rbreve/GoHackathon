@@ -8,6 +8,8 @@ local scene = storyboard.newScene()
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
+	game.notParalax()
+	
 	local group = self.view
 	
 	game:setGroup(group)
@@ -34,10 +36,10 @@ function scene:createScene( event )
 	prefabs:createPlatform(850,400, 2)
 	prefabs:createPlatform(850,530, 2)
 	prefabs:createDoor(1024,200, "level1")
+	--prefabs:createDoor(200,200, "level1")
+	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
 	--Level Design
-	playBackgroundMusic("Hustle.mp3")
 	
-	game:setState("normal")
 	game:setScene("levelT")
 	game:setPlayer(pSprite)
     group:insert(pSprite)

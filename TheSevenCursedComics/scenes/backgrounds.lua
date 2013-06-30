@@ -4,6 +4,11 @@ local backgrounds = {}
 
 local isMoving
 
+backgrounds.removeTimer = function()
+	Runtime:removeEventListener( "enterFrame", moveBackground )
+		
+end
+
 backgrounds.setMoving = function(bool)
 	isMoving=bool
  end
@@ -26,17 +31,21 @@ backgrounds.newParalax = function(imageName,  y, speed)
 
 	local function moveBackground()		
 	 
-		if(ground.x <= -display.contentWidth/2) then
-			ground.x = initX
-		end
+	 	if(ground.x ~= nil) then
+			
+			if(ground.x <= -display.contentWidth/2) then
+				ground.x = initX
+			end
 		
-		if(ground2.x <= -display.contentWidth/2) then
-			ground2.x = initX
-		end
+			if(ground2.x <= -display.contentWidth/2) then
+				ground2.x = initX
+			end
 		
-		if(isMoving) then
-			ground2.x=ground2.x-speed
-			ground.x=ground.x-speed
+			if(isMoving) then
+				ground2.x=ground2.x-speed
+				ground.x=ground.x-speed
+			end
+		
 		end
 	end
 

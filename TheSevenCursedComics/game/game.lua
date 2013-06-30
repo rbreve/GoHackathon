@@ -8,6 +8,7 @@ local game = {}
 local font = "Free Pixel"
 local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
+local enemyEnergy=1
 local currentScene, nextScene
 local hpSound, glSound, shootSound, jumpSound
 local enemies = {}
@@ -25,7 +26,13 @@ function game:transitionTo(sceneName, effectT, timeT)
 		time = timeT,
 	}
 	
+	physics_ = nil
+	enemyEnergy=1
 	storyboard.gotoScene("scenes."..sceneName, options)
+end
+
+function game:getEnemyEnergy()
+	return enemyEnergy
 end
 
 function game:resetScene()
@@ -64,6 +71,11 @@ function game:isMoving()
 	return isMoving
 end
 
+function game:notParalax()
+	isParalax = false
+	
+end
+
 function game:setIsParalax(bool)
 	isParalax = true
 end
@@ -81,7 +93,14 @@ end
 
 function onUpdate(event)
 	if state == "normal" then
-		physics.start()
+		if player.y ~= nil then
+			
+			if player.y  > 1000 then
+				playPlayerDamageSound()
+				addDamage(4)
+			end
+		
+		end
 	end
 	
 	if state == "cutScene" then
@@ -162,12 +181,12 @@ function playerBehaviour(self, event)
 			local gum
 			
 			if not leftP then
-				gum = display.newRect(player.x + 60, player.y - 50, 20, 20)
+				gum = display.newImage("assets/images/objects/candy.png", player.x + 70, player.y - 50, 20, 20)
 				gum:setFillColor(255,150,150)
 				physics_.addBody(gum)
 				gum:applyLinearImpulse(0.1, -0.06, gum.x, gum.y )
 			else
-				gum = display.newRect(player.x - 100, player.y - 50, 20, 20)
+				gum = display.newImage("assets/images/objects/candy.png", player.x - 90, player.y - 50, 20, 20)
 				gum:setFillColor(255,150,150)
 				physics_.addBody(gum)
 				gum:applyLinearImpulse(-0.1, -0.06, gum.x, gum.y )
@@ -222,19 +241,16 @@ function onCollisionPlayer(event)
 	if event.phase == "began" and state == "normal" then 
 		if event.other.myName == "ground" then
 			isJumping = false
-			
-			if not isPressedPad then
-				player:setSequence("stand")
-				player:play()
-			else
-				player:setSequence("walk")
-				player:play()
-			end
 		end
 		
 		if event.other.myName == "enemy" then
 			playPlayerDamageSound()
-			addDamage(1)
+			player:applyForce(240,200,event.other.x,event.other.y)
+			local f = function() addDamage(4) end
+			
+			timer.performWithDelay(400, f) 		
+			
+		
 		end	
 		
 		if event.other.myName == "food" then
@@ -245,7 +261,12 @@ function onCollisionPlayer(event)
 		end	
 		
 		if event.other.myName == "door" then
-			game:transitionTo(game:getNextScene(), "crossFade", 1000)
+			print ("door")
+			state = "nil"
+	
+			--game:transitionTo(game:getNextScene(), "crossFade", 1000)
+			game:transitionTo("menu", zoomInOutFade, 2000)
+					
 		end
 	end
 end
@@ -254,26 +275,33 @@ function createParticles(x, y, width, height)
 	for i = 0, 4, 1 do
 		local particle = display.newRect(x + math.random( -(width / 2), width ), math.random(y-40, y - 20), 10, 10)
 		particle:setFillColor(255,255,255)
-		physics_.addBody(particle)
-		--particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
-		group:insert(particle)
-		particle.myName = "particle"
-		--particle.collision = onCollisionParticle
-		--particle:addEventListener("collision", particle)
+		local p = function()
+			physics_.addBody(particle)
+			particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(0, 0.01), particle.x, particle.y )
+			group:insert(particle)
+			particle.myName = "particle"
+			particle.collision = onCollisionParticle
+			particle:addEventListener("collision", particle)
+		end
+	
+		timer.performWithDelay(50, p) 		
 	end
 end
 
 function onCollisionGum(self, event)
 	--createParticles(self.x, self.y, self.width, self.height)
-	local f = function() self:removeSelf() end
-	timer.performWithDelay(50,f,100)
+	local f = function() 
+		--self:removeSelf() 
+	end
 	
 	if event.other.myName == "enemy" then
-		event.other:removeSelf()
+		timer.performWithDelay(150,f,100)
+		hurtEnemy()
 	end
 	
 	if event.other.myName == "food" then
-		event.other:removeSelf()
+		timer.performWithDelay(150,f,100)
+			
 	end
 end
 
@@ -285,16 +313,21 @@ end
 
 function game:setPlayer(pl)
 	player = pl
-
-	physics.addBody(player, {bounce=0, shape = { -15,-100, 15,-100, 15,105, -15,105 }})
-	player.myName="player"
+ 
+	local p = function()
+		physics.addBody(player, {bounce=0, shape = { -15,-100, 15,-100, 15,105, -15,105 }})
+		player.isFixedRotation = true
+		player.myName="player"
+		
+			
+		player:addEventListener("collision", onCollisionPlayer)
+		Runtime:addEventListener("enterFrame", onUpdate)
+		game:setState("normal")
+	end
 	
-	player.isFixedRotation = true
+	timer.performWithDelay(50, p) 
 	
 	isJumping = false
-	
-	player:addEventListener("collision", onCollisionPlayer)
-	Runtime:addEventListener("enterFrame", onUpdate)
 end
 
 function game:setGroup(gr)
@@ -385,6 +418,14 @@ function game:loadUI()
 	return group
 end
 
+function resetEnemy()
+		enemyEnergy=1
+end
+
+function hurtEnemy()
+	enemyEnergy = enemyEnergy+1
+end
+
 function addGul(value)
 	local path = "assets/images/ui/"
 	
@@ -420,6 +461,9 @@ function addDamage(value)
 	local path = "assets/images/ui/"
 	
 	hp = hp - value
+	if hp <= 0 then
+			hp = 0
+	end
 	
 		hpB:removeSelf()
 		hpB = display.newImage(path.."power"..hp..".png", 250, 20)
@@ -486,7 +530,8 @@ end
 
 function playBackgroundMusic(name)
 	if game:isMusicActive() then
-		audio.play("assets/music/", {channel=1, loops=0})
+		local song = audio.loadSound("assets/music/"..name)
+		audio.play(song, {channel=1, loops=0})
 	end
 end
 

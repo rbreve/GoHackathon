@@ -19,8 +19,9 @@ function player:loadPlayer(x, y, width, height)
 	playerSprite = display.newSprite(playerSheet, sequenceData)
 	playerSprite:setSequence("walk")
 	playerSprite:play()
+	playerSprite:scale(-1,1)
 	
-	physics.addBody(playerSprite, "static", {bounce=0.2})
+	physics.addBody(playerSprite, {bounce=0.2})
 	playerSprite.myName="enemy"
 	playerSprite.isFixedRotation = true
 	playerSprite.x = x; playerSprite.y = y

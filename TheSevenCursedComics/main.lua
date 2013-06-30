@@ -14,7 +14,7 @@ display.setStatusBar(display.HiddenStatusBar)
 -- load scenetemplate.lua
  
  
-storyboard.gotoScene("scenes.paralax")
+storyboard.gotoScene("scenes.menu")
  
 
 

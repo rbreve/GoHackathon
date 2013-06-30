@@ -20,7 +20,7 @@ local scene = storyboard.newScene()
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	
+	print ("level 1 !")
 	local confites = {}
 	local group = self.view
 	
@@ -30,6 +30,7 @@ function scene:createScene( event )
 	physics.start()
 	physics.setGravity(0, 40)
 	physics.setDrawMode("normal")
+	
 	
 		
 	
@@ -41,10 +42,10 @@ function scene:createScene( event )
  	mountains = paralax.newParalax("images/mountains1.png", 530, 4)
 	paralax.setMoving(true)
 	
-	local dude = player:loadPlayer(500,400)
+	local dude = player:loadPlayer(200,400)
 	game:setPlayer(dude)
 	
-	local enemy = enemy:loadPlayer(100,300)
+	local enemy = enemy:loadPlayer(900,300)
 	
 	local enemyInc=2
 	
@@ -107,10 +108,26 @@ function scene:createScene( event )
 	local moveY=3
 	
 	function moveEnemy()
+		if enemy.x==nil then
+			return
+		end
+		if enemy.x>=2000 then
+			game:transitionTo("menu", zoomInOutFade, 2000)
+		end
 		
+		local enemyEnergy = game:getEnemyEnergy()
 		
-		--paralax.setMoving(game:isMoving())
+	 
 		
+		if enemyEnergy==4  then
+			enemy:applyForce(-100,400, enemy.x-20, enemy.y-20)
+			print "dead boss"
+		end
+		
+		if enemyEnergy>=20 then
+			enemy:applyForce(5000,1000,enemy.x,enemy.y)
+		end
+				
 		if (game:isMoving()) then
 			doorSprite.x = doorSprite.x-9
 			
@@ -124,13 +141,11 @@ function scene:createScene( event )
 		if(enemy.y~=nil) then
 			enemy.y=enemy.y+moveY
 			
-			enemy.x=enemy.x+enemyInc
+			--enemy.x=enemy.x+enemyInc
 			
-			if(game:isMoving()) then
-				enemy.x=enemy.x-2
-			end
+		 
 		
-			if (enemy.y>350 and moveY>0) then
+			if (enemy.y>550 and moveY>0) then
 				moveY=-moveY
 			else if (enemy.y<250 and moveY<0) then
 				moveY=-moveY
@@ -184,13 +199,13 @@ function scene:createScene( event )
 		
 		local physicsData = (require "assets.images.objects.blue_gumS").physicsData(1)
 		local ball = display.newImage("assets/images/objects/"..colorName.."_gumS.png")
-		physics.addBody( ball, "static", physicsData:get("blue_gumS") )
+		physics.addBody( ball, "dynamic", physicsData:get("blue_gumS") )
 		ball.isFixedRotation=false
 		ball.x=x
 		ball.y=y
 		ball.collision=onLocalCollision
 		ball:addEventListener("collision", ball)
-		--ball:applyForce(-3000,2000,ball.x-10, ball.y-10)
+		ball:applyForce(-3000,2000,ball.x-10, ball.y-10)
 		
 		table.insert(confites,ball)
 		
@@ -198,29 +213,20 @@ function scene:createScene( event )
 		
 	end
 	
-	
-	addLata(1700+math.random(1,200),420)
-	
-	addLata(2220+math.random(1,200),490)
-	
-	addConfite(1500+math.random(10,200),520)
-	
-	addConfite(2000+math.random(10,200),520)
-	
-	
-	addConfite(2800+math.random(10,200),520)
-	
-	addConfite(3200+math.random(10,200),520)
-	
-	addConfite(3800+math.random(10,200),520)
-	
-	
-	addLata(4500,490)
-	
+	local fireBullet = {}
+	function fireBullet:timer(event)
+		if enemy.x==nil then
+			timer.cancel(event.source)
+		else
+			addConfite(enemy.x-200, enemy.y+50)	
+		end
+	end
+	 
+	timer.performWithDelay(2000, fireBullet, 60)
 	
 	Runtime:addEventListener( "enterFrame", moveEnemy )
 	--timer.performWithDelay( 2000, dropBall, 20 )
-	game.setIsParalax(true)
+	--game.setIsParalax(true)
 	
 	
 end
@@ -248,7 +254,6 @@ scene:addEventListener( "exitScene", scene )
 function scene:destroyScene( event )
 	local group = self.view
 	Runtime:removeEventListener( "enterFrame", moveBackground )
-	Runtime:removeEventListener( "enterFrame", moveEnemy )
 	
 	
 end
