@@ -13,8 +13,13 @@ end
 function prefabs:createPlatform(x, y, id)
 	local platform = display.newImage(path.."platform"..id..".png", x, y)
 	platform.myName = "ground"
-	local physics = game:getPhysics()
-	physics.addBody(platform, "static", {friction = 0.1 })
+	
+	local p = function()
+		local physics = game:getPhysics()
+		physics.addBody(platform, "static",{ bounce = 0, friction = 0.1})
+	end
+	timer.performWithDelay(50, p) 
+	--physics.addBody(platform, "static", { bounce = 0, friction = 0.1 })
 
 	local group = game:getGroup()
 	group:insert(platform)
@@ -46,9 +51,12 @@ function prefabs:createDoor(x, y, nextScene)
 	doorSprite.myName = "door"
 	doorSprite.x = x; doorSprite.y = y
 	game:setNextScene(nextScene)
-
-	local physics = game:getPhysics()
-	physics.addBody(doorSprite, "kinematic")
+	
+	local p = function()
+		local physics = game:getPhysics()
+		physics.addBody(doorSprite, "static",{ bounce = 0})
+	end
+	timer.performWithDelay(50, p) 
 	local group = game:getGroup()
 	group:insert(doorSprite)
 	
