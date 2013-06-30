@@ -14,7 +14,7 @@ function scene:createScene( event )
 	local physics = require "physics"	
 	game:setPhysics(physics)
 	physics.start()
-	physics.setGravity(0, 40)
+	physics.setGravity(0, 52)
 	physics.setDrawMode("normal")	
 	
 	local background = display.newRect(0,0, display.contentWidth, display.contentHeight)

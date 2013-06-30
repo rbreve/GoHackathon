@@ -32,12 +32,6 @@ function game:resetScene()
 	game:transitionTo("dummyScene", "crossFade", 500)
 end
 
-function game:gameOnUpdate()
-	if state == "cutScene" then
-	
-	end
-end
-
 function game:isSoundActive()
 	return isSoundActive_
 end
@@ -99,8 +93,10 @@ function playerBehaviour(self, event)
 		if self.myName == "left" then
 			local vx, vy = player:getLinearVelocity()
 			player:setLinearVelocity(-speed, vy)
-			player:setSequence("walk")
-			player:play()
+			if not isJumping then
+				player:setSequence("walk")
+				player:play()
+			end
 			leftP = true
 			player.xScale = -1
 		end	
@@ -108,8 +104,10 @@ function playerBehaviour(self, event)
 		if self.myName == "right" then
 			local vx, vy = player:getLinearVelocity()
 			player:setLinearVelocity(speed, vy)
-			player:setSequence("walk")
-			player:play()
+			if not isJumping then
+				player:setSequence("walk")
+				player:play()
+			end
 			leftP = false
 			player.xScale = 1
 		end	
@@ -120,6 +118,8 @@ function playerBehaviour(self, event)
 			if not isJumping then
 				player:applyLinearImpulse( 0, -4, player.x, player.y )
 				isJumping = true
+				player:setSequence("jump")
+				player:play()
 			end
 			--player:setSequence("stand")
 			--player:play()
@@ -169,6 +169,8 @@ function onCollisionPlayer(event)
 	if event.phase == "began" and state == "normal" then 
 		if event.other.myName == "ground" then
 			isJumping = false
+			player:setSequence("stand")
+			player:play()
 		end
 		
 		if event.other.myName == "enemy" then
@@ -190,7 +192,7 @@ function createParticles(x, y, width, height)
 		local particle = display.newRect(x + math.random( -(width / 2), width ), math.random(y-40, y - 20), 10, 10)
 		particle:setFillColor(255,255,255)
 		physics_.addBody(particle)
-		--particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
+		particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(-0.6, 0), particle.x, particle.y )
 		group:insert(particle)
 		particle.myName = "particle"
 		--particle.collision = onCollisionParticle
