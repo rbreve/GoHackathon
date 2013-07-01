@@ -9,6 +9,10 @@ local bMusic, bSound, chkMusic, chkSound, gGroup
 local function saveSettings()
 	game:setMusic(bMusic)
 	game:setSound(bSound)
+	
+	if not bMusic then
+		--game:stopBackgroundMusic()
+	end
 end
 
 local function onSave(event)
@@ -28,11 +32,11 @@ local function onMusicPressed(event)
 	if event.phase == "began" then
 		bMusic = not bMusic
 		if bMusic then
-			chkMusic = display.newRect((display.contentWidth / 2) + 60,105, 30, 30)
-			chkMusic:setFillColor(255,0,0,255)
+			chkMusic = display.newImage("assets/images/ui/hamburger_check.png",782, 95,  88, 88)
+			--chkMusic:setFillColor(255,0,0,255)
 		else
-			chkMusic = display.newRect((display.contentWidth / 2) + 60,105, 30, 30)
-			chkMusic:setFillColor(255,255,255,255)
+			chkMusic =  display.newImage("assets/images/ui/hamburger_check2.png",760, 75, 88, 88)
+			--chkMusic:setFillColor(255,255,255,0.1)
 		end
 		gGroup:insert(chkMusic)
 	end
@@ -42,11 +46,11 @@ local function onSoundPressed(event)
 	if event.phase == "began" then
 		 bSound = not bSound
 		if bSound then
-			chkSound = display.newRect((display.contentWidth / 2) + 60,150, 30, 30)
-			chkSound:setFillColor(255,0,0,255)
+			chkSound = display.newImage("assets/images/ui/hamburger_check.png",784,227, 88, 88)
+			--chkSound:setFillColor(255,0,0,255)
 		else
-			chkSound = display.newRect((display.contentWidth / 2) + 60,150, 30, 30)
-			chkSound:setFillColor(255,255,255,255)
+			chkSound =  display.newImage("assets/images/ui/hamburger_check2.png",762,207, 88, 88)
+			--chkSound:setFillColor(255,255,255,0.1)
 		end
 		gGroup:insert(chkSound)
 	end
@@ -60,14 +64,18 @@ function scene:createScene( event )
 	local back, save, buttonWidth, buttonHeight
 	local textMusic, textSound
 	
-	buttonWidth = 100
-	buttonHeight = 30
+	local background = display.newImage("assets/images/backgrounds/options.png", 0,0, display.contentWidth, display.contentHeight)
 	
-	textMusic = display.newText(dialogs["music"](), (display.contentWidth / 2) - 100,100, game:getFont(), 30)
-	textSound = display.newText(dialogs["sound"](), (display.contentWidth / 2) - 100,150, game:getFont(), 30)
+	buttonWidth = 349
+	buttonHeight = 89
 	
-	save = display.newRect((display.contentWidth / 2) - (buttonWidth * -0.05), (display.contentHeight / 1.2),buttonWidth,buttonHeight)
-	back = display.newRect((display.contentWidth / 2) - (buttonWidth * 1.05), (display.contentHeight / 1.2),buttonWidth,buttonHeight)
+	--textMusic = display.newText(dialogs["music"](), (display.contentWidth / 2) - 100,100, game:getFont(), 30)
+	--textSound = display.newText(dialogs["sound"](), (display.contentWidth / 2) - 100,150, game:getFont(), 30)
+	
+	save = display.newRect((display.contentWidth / 2) - (buttonWidth * -0.05), 350,buttonWidth,buttonHeight)
+	back = display.newRect((display.contentWidth / 2) - (buttonWidth * 1.05), 350,buttonWidth,buttonHeight)
+	save.alpha = 0.01
+	back.alpha = 0.01
 	
 	save:addEventListener("touch", onSave)
 	back:addEventListener("touch", onBack)
@@ -76,28 +84,29 @@ function scene:createScene( event )
 	
 		
 	if bMusic then
-		chkMusic = display.newRect((display.contentWidth / 2) + 60,105, 30, 30)
-		chkMusic:setFillColor(255,0,0,255)
+		chkMusic = display.newImage("assets/images/ui/hamburger_check.png", 782, 95, 88, 88)
+		--chkMusic:setFillColor(255,0,0,255)
 	else
-		chkMusic = display.newRect((display.contentWidth / 2) + 60,105, 30, 30)
-		chkMusic:setFillColor(255,255,255,255)
+		chkMusic =  display.newImage("assets/images/ui/hamburger_check2.png",760, 75, 88, 88)
+		--chkMusic:setFillColor(255,255,255,0.1)
 	end
 	
 	if bSound then
-		chkSound = display.newRect((display.contentWidth / 2) + 60,150, 30, 30)
-		chkSound:setFillColor(255,0,0,255)
+		chkSound = display.newImage("assets/images/ui/hamburger_check.png",784,227, 88, 88)
+		--chkSound:setFillColor(255,0,0,255)
 	else
-		chkSound = display.newRect((display.contentWidth / 2) + 60,150, 30, 30)
-		chkSound:setFillColor(255,255,255,255)
+		chkSound =  display.newImage("assets/images/ui/hamburger_check2.png",762,207, 88, 88)
+		--chkSound:setFillColor(255,255,255,0.1)
 	end
 	
 	chkMusic:addEventListener("touch", onMusicPressed)
 	chkSound:addEventListener("touch", onSoundPressed)
 	
+	group:insert(background)
 	group:insert(save)
 	group:insert(back)
-	group:insert(textMusic)
-	group:insert(textSound)
+	--group:insert(textMusic)
+	--group:insert(textSound)
 	group:insert(chkMusic)
 	group:insert(chkSound)
 end

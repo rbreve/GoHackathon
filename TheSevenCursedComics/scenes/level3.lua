@@ -14,7 +14,7 @@ function scene:createScene( event )
 	game:setGroup(group)
 	prefabs:createBackground(16,198,232)
 	
-	local pSprite = player:loadPlayer(100,300, 50, 75)
+	local pSprite = player:loadPlayer(75,450, 50, 75)
 	
 	local physics = require "physics"	
 	game:setPhysics(physics)
@@ -24,39 +24,43 @@ function scene:createScene( event )
 	
 	--Level Design
 	prefabs:createClouds(100,100, 1)
-	prefabs:createPlatform(100,420, 1)
-	prefabs:createPlatform(100,600, 1)
-	prefabs:createPlatform(300,400, 2)
-	prefabs:createPlatform(300,540, 2)
-	prefabs:createPlatform(450,350, 1)
-	prefabs:createPlatform(450,540, 1)
-	prefabs:createPlatform(700,500, 2)
-	prefabs:createPlatform(700,650, 2)
-	prefabs:createPlatform(850,400, 2)
-	prefabs:createPlatform(850,530, 2)
-	--prefabs:createDoor(200,200, "level1")
-	game:setPlayer(pSprite)
-	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
+	prefabs:createMountains(0,490, 55,1111)
+	prefabs:createPlatform(-90,display.contentHeight - 50, 1)
+	prefabs:createPlatform(-90,display.contentHeight - 150, 1)
+	prefabs:createPlatform(-90,display.contentHeight - 250, 1)
+	prefabs:createPlatform(-90,display.contentHeight - 350, 1)
+	prefabs:createPlatform(-90,display.contentHeight - 450, 1)
+	prefabs:createPlatform(-90,display.contentHeight - 550, 1)
+	
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 50, 1)
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 150, 1)
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 250, 1)
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 350, 1)
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 450, 1)
+	prefabs:createPlatform(display.contentWidth - 20,display.contentHeight - 550, 1)
+	
+	prefabs:createPlatform(0,display.contentHeight - 100, 3)
+	
+	playBackgroundMusic("Hustle.mp3")
 	--Level Design
-	--Enemies
-		prefabs:createChocolateBat(400, 200, 2)
-		prefabs:createChocolateBat(650, 200, 2)
-		prefabs:createChocolateBat(800, 100, 2)
-	--Enemies
+	game:setPlayer(pSprite)
+	game.setIsParalax(true)
 	
-	game:setScene("level1")
-    group:insert(pSprite)
+	prefabs:createBurger(780,328, 500)
+	--Level Design
 	
-	local text = display.newText(dialogs["level1"](), 10, 110, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
+	local text = display.newText(dialogs["feedMe"](), 10, 110, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text:setTextColor(255,255,0)
 	text.alpha = 0
 	transition.to( text, { time=500, alpha = 1} )
 	
-	local text2 = display.newText(dialogs["level1"](), 11, 108, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
+	local text2 = display.newText(dialogs["feedMe"](), 11, 108, display.contentWidth - 10, display.contentHeight , game:getFont(), game:getFontSize())
 	text2:setTextColor(0,0,0)
 	text2.alpha = 0
 	transition.to( text2, { time=500, alpha = 1} )
 	
+	game:setScene("level3")
+    group:insert(pSprite)
 	group:insert(text)
 	group:insert(text2)
 	
@@ -73,7 +77,7 @@ scene:addEventListener( "createScene", scene )
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	prefabs:createDoor(1024,200, "level2")
+	prefabs:createDoor(1024,200, "menu")
 	group:insert(game:loadUI())
 	storyboard.purgeAll()
 end

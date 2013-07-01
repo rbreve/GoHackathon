@@ -10,9 +10,8 @@ local player, group, gl, lPad, rPad, sButton, jButton, hpB
 local speed = 250
 local enemyEnergy=1
 local currentScene, nextScene
-local hpSound, glSound, shootSound, jumpSound
-local enemies = {}
-local physics_, leftP, isMoving, isPressedPad, isParalax
+local hpSound, glSound, shootSound, jumpSound, painMonster
+local physics_, leftP, isMoving, isPressedPad, isParalax, canShoot, burger, burgerInt, bPart1, bPart2, bPart3, bPart4, bPart5, burgerReady, count
 ----------------------------------------------------------------------------------
 function game:transitionTo(sceneName, effectT, timeT)
 	--slideLeft (pushes original scene)
@@ -26,8 +25,9 @@ function game:transitionTo(sceneName, effectT, timeT)
 		time = timeT,
 	}
 	
-	physics_ = nil
+	--physics_ = nil
 	enemyEnergy=1
+	--physics_ = nil
 	storyboard.gotoScene("scenes."..sceneName, options)
 end
 
@@ -84,11 +84,16 @@ function game:getIsParalax()
 	return isParalax
 end
 
+function game:getPlayer()
+	return player
+end
+
 function game:loadResources()
 	hpSound =  audio.loadSound("assets/sounds/damageMikeKoenig.mp3")
 	glSound = audio.loadSound("assets/sounds/bite.mp3")
 	shootSound= audio.loadSound("assets/sounds/shoot_MikeKoenig.mp3")
 	jumpSound= audio.loadSound("assets/sounds/Swoosh3SoundBible.com.mp3")
+	painMonster = audio.loadSound("assets/sounds/pain.mp3")
 end
 
 function onUpdate(event)
@@ -100,6 +105,10 @@ function onUpdate(event)
 				addDamage(4)
 			end
 		
+		end
+		
+		if currentScene == "level3" then
+			burgerBehavior ()
 		end
 	end
 	
@@ -114,6 +123,27 @@ function onUpdate(event)
 	if state == "dead" then
 	
 	end
+end
+
+function burgerBehavior ()
+		p = function()
+			local intenger = math.random(1,5)
+			local burgers = display.newImage("assets/images/objects/b"..intenger..".png", math.random( 0, 600 ), -20)
+			physics_.addBody(burgers)
+			if group then
+				group:insert(burgers)
+			end
+			burgers.myName = "burgers"..intenger
+			burgers.collision = onCollisionBurger
+			burgers:addEventListener("collision", burgers)
+		end
+		
+		if count > 25 then
+			timer.performWithDelay(50, p)
+			count = 0
+		else
+			count = count + 1
+		end
 end
 
 function playerBehaviour(self, event)
@@ -163,7 +193,7 @@ function playerBehaviour(self, event)
 			
 			if not isJumping then
 				playPlayerJumpSound()
-				player:applyLinearImpulse( 0, -1.5, player.x, player.y )
+				player:applyLinearImpulse( 0, -2, player.x, player.y )
 				isJumping = true
 				player:setSequence("jump")
 				player:play()
@@ -176,6 +206,8 @@ function playerBehaviour(self, event)
 		
 				
 		if self.myName == "a" then
+		
+		if canShoot then
 			playPlayerShootSound()
 			
 			local gum
@@ -196,7 +228,13 @@ function playerBehaviour(self, event)
 			group:insert(gum)
 			
 			sButton.alpha = 0.8
-		end	
+			
+			local t = function()
+				canShoot = true
+			end
+			timer.performWithDelay(100, t) 
+			end
+		end
 	end
 	
 	if event.phase == "ended" and state == "normal" then
@@ -253,12 +291,66 @@ function onCollisionPlayer(event)
 		
 		end	
 		
+		local patt = "[1234567890]"
+		
+		if (event.other.myName~=nil) then
+		if string.match(event.other.myName, patt) and event.other.myName ~= "burgers1" and event.other.myName ~= "burgers2" and event.other.myName ~= "burgers3" and event.other.myName ~= "burgers4" and event.other.myName ~= "burgers5" then
+			playPlayerDamageSound()
+			addDamage(1)
+		end	
+		end
+		
 		if event.other.myName == "food" then
 			playPlayerGLSound()
 			addGul(1)
 			createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
 			event.other:removeSelf()
 		end	
+		
+		if event.other.myName == "burgers1" then
+			bPart1 = true
+			burgerInt = 1
+			burger = display.newImage("assets/images/ui/burger"..burgerInt..".png", 500,10)
+			group:insert(burger)
+		end
+		
+		if event.other.myName == "burgers2" then
+			if bPart1 and not bPart2 then 
+				bPart2 = true
+				burgerInt = 2
+				burger = display.newImage("assets/images/ui/burger"..burgerInt..".png", 500,10)
+				group:insert(burger)
+			end
+		end
+		
+		if event.other.myName == "burgers3" then
+			if bPart2 and not bPart3 then
+				bPart3 = true
+				burgerInt = 3
+				burger = display.newImage("assets/images/ui/burger"..burgerInt..".png", 500,10)
+				group:insert(burger)
+			end
+		end
+		
+		if event.other.myName == "burgers4" then
+			if bPart3 and not bPart4 then
+				bPart4 = true
+				burgerInt = 4
+				burger = display.newImage("assets/images/ui/burger"..burgerInt..".png", 500,10)
+				group:insert(burger)
+			end
+		end
+		
+		if event.other.myName == "burgers5" then
+			if bPart4 and not bPart5 then
+				bPart5 = true
+				burgerInt = 5
+				burgerReady = true
+				burger = display.newImage("assets/images/ui/burger"..burgerInt..".png", 500,10)
+				group:insert(burger)
+				createBurger()
+			end
+		end
 		
 		if event.other.myName == "door" then
 			print ("door")
@@ -271,6 +363,7 @@ function onCollisionPlayer(event)
 	end
 end
 
+			
 function createParticles(x, y, width, height)
 	for i = 0, 4, 1 do
 		local particle = display.newRect(x + math.random( -(width / 2), width ), math.random(y-40, y - 20), 10, 10)
@@ -278,7 +371,9 @@ function createParticles(x, y, width, height)
 		local p = function()
 			physics_.addBody(particle)
 			particle:applyLinearImpulse(math.random(-0.1, 0.1), math.random(0, 0.01), particle.x, particle.y )
-			group:insert(particle)
+			if group then
+				group:insert(particle)
+			end
 			particle.myName = "particle"
 			particle.collision = onCollisionParticle
 			particle:addEventListener("collision", particle)
@@ -303,10 +398,87 @@ function onCollisionGum(self, event)
 		timer.performWithDelay(150,f,100)
 			
 	end
+	
+	local patt = "[1234567890]"
+	
+	if(event.other.myName~=nil) then
+	
+		if string.match(event.other.myName, patt)  and event.other.myName ~= "burgers1" and event.other.myName ~= "burgers2" and event.other.myName ~= "burgers3" and event.other.myName ~= "burgers4" and event.other.myName ~= "burgers5" then
+			if tonumber(event.other.myName) > 1 then
+				event.other.myName = tonumber(event.other.myName) - 1
+				print(event.other.myName)
+		
+				if tonumber(event.other.myName) < 1 then
+					monsterDead()
+					createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
+					transition.to( event.other, { time=300, alpha=0 } )
+				end
+		
+			else
+				monsterDead()
+				createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
+				transition.to( event.other, { time=300, alpha=0 } )
+				--event.other:removeSelf()
+			end	
+		end
+	end
+end
+
+function createBurger()
+			local 	burger_ = display.newImage("assets/images/ui/burger5.png", player.x + 150, player.y - 50, 60, 60)
+			
+			local p = function() 
+				if not leftP then
+				physics_.addBody(burger_)
+				burger_:applyLinearImpulse(1, -1, burger_.x, burger_.y )
+			else
+				physics_.addBody(burger_)
+				burger_:applyLinearImpulse(-1, -1, burger_.x, burger_.y )
+			end
+			burger_.collision = onCollisionBurger
+			burger_:addEventListener("collision", burger_)
+			group:insert(burger_)
+			burger:removeSelf()
+			sButton.alpha = 0.8
+			burgerReady = false
+			bPart1= false; bPart2 = false; bPart3 = false; bPart4 = false; bPart5= false;
+			burgetInt = 0
+			end
+			
+			timer.performWithDelay(100, p)
+end
+
+function onCollisionBurger(self, event)
+	local patt = "[1234567890]"
+		
+	if string.match(event.other.myName, patt)  and event.other.myName ~= "burgers1" and event.other.myName ~= "burgers2" and event.other.myName ~= "burgers3" and event.other.myName ~= "burgers4" and event.other.myName ~= "burgers5" then
+		if tonumber(event.other.myName) > 1 then
+			event.other.myName = tonumber(event.other.myName) - 200
+			print(event.other.myName)
+			
+			if tonumber(event.other.myName) < 1 then
+				monsterDead()
+				createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
+				transition.to( event.other, { time=300, alpha=0 } )
+			end
+		else
+			monsterDead()
+			createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
+			transition.to( event.other, { time=300, alpha=0 } )
+			--event.other:removeSelf()
+		end	
+	end
 end
 
 function onCollisionParticle(self, event)
 	if event.other.myName ~= "particle" then
+		self:removeSelf()
+	end
+end
+
+function onCollisionBurger(self, event)
+	if event.other.myName == "ground" or  event.other.myName == "player" then
+		createParticles(event.other.x, event.other.y, event.other.width, event.other.height)
 		self:removeSelf()
 	end
 end
@@ -324,7 +496,10 @@ function game:setPlayer(pl)
 		Runtime:addEventListener("enterFrame", onUpdate)
 		game:setState("normal")
 	end
-	
+	player.myName = "player"
+	canShoot = true
+	burgerInt = 0
+	count = 0
 	timer.performWithDelay(50, p) 
 	
 	isJumping = false
@@ -356,6 +531,10 @@ end
 
 function game:setState(tx)
 	state = tx
+end
+
+function game:getState()
+	return state
 end
 
 function game:setPhysics(py)
@@ -447,9 +626,11 @@ function addGul(value)
 			Runtime:removeEventListener("enterFrame", onUpdate)
 			
 			if lives == 1 then
+				state = "dead"
 				lives = lives - 1
 				gameOver()
-			else			
+			else		
+				state = "dead"
 				lives = lives - 1
 				gluttony = 0
 				game:resetScene()
@@ -464,8 +645,10 @@ function addDamage(value)
 	if hp <= 0 then
 			hp = 0
 	end
-	
-		hpB:removeSelf()
+		
+		if hpB ~= nil then
+			hpB:removeSelf()
+		end
 		hpB = display.newImage(path.."power"..hp..".png", 250, 20)
 		hpB:toFront()
 		group:insert(hpB)
@@ -481,9 +664,11 @@ function addDamage(value)
 			Runtime:removeEventListener("enterFrame", onUpdate)
 			
 			if lives == 1 then
+				state = "dead"
 				lives = lives - 1
 				gameOver()
-			else			
+			else	
+				state = "dead"
 				lives = lives - 1
 				hp = 4
 				game:resetScene()
@@ -528,15 +713,24 @@ function playPlayerJumpSound()
 	end
 end
 
+function monsterDead()
+	if game:isSoundActive() then
+		audio.play(painMonster, {channel=7, loops=0})
+	end
+end
+
+
 function playBackgroundMusic(name)
 	if game:isMusicActive() then
 		local song = audio.loadSound("assets/music/"..name)
-		audio.play(song, {channel=1, loops=0})
+		audio.play(song, {channel=1, loops=99999})
 	end
 end
 
 function stopBackgroundMusic()
+	if audio.isChannelPlaying(1) then
 		audio.stop({channel=1})
+	end
 end
 
 return game

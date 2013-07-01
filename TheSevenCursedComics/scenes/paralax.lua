@@ -109,7 +109,7 @@ function scene:createScene( event )
 	function moveEnemy()
 		
 		
-		--paralax.setMoving(game:isMoving())
+		paralax.setMoving(game:isMoving())
 		
 		if (game:isMoving()) then
 			doorSprite.x = doorSprite.x-9
@@ -219,7 +219,7 @@ function scene:createScene( event )
 	
 	
 	Runtime:addEventListener( "enterFrame", moveEnemy )
-	--timer.performWithDelay( 2000, dropBall, 20 )
+	timer.performWithDelay( 2000, dropBall, 20 )
 	game.setIsParalax(true)
 	
 	

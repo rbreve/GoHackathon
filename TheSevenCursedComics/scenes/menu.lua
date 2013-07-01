@@ -6,6 +6,7 @@ local scene = storyboard.newScene()
 ----------------------------------------------------------------------------------
 local function onPlay(event)
 	if event.phase == "began" then
+		stopBackgroundMusic()
 		game:transitionTo("storyP1", "slideDown", 1000)
 	end
 end
@@ -28,6 +29,19 @@ local function onLevel2(event)
 	end
 end
 
+local function onLevel3(event)
+	if event.phase == "began" then
+		game:transitionTo("paralax", "crossFade", 500)
+	end
+end
+
+local function onLevel4(event)
+	if event.phase == "began" then
+		game:transitionTo("level3", "crossFade", 500)
+	end
+end
+
+
 
 ----------------------------------------------------------------------------------
 -- Called when the scene's view does not exist:
@@ -48,24 +62,40 @@ function scene:createScene( event )
 	
 	play = display.newRect(87, 422,buttonWidth,buttonHeight)
 	options = display.newRect(308, 422, buttonWidthO, buttonHeightO)
+	
 	local level1 =  display.newRect(87, 565,179,46)
 	local level2 =  display.newRect(356, 565,179,46)
+	local level3 =  display.newRect(620, 565,179,46)
+	local level4 =  display.newRect(884, 565,179,46)
+	
 	
 	play.alpha = 0.01
 	options.alpha = 0.01
+
 	level1.alpha=0.01
 	level2.alpha=0.01
+	level3.alpha=0.01
+	level4.alpha=0.01
+	
 		
+	stopBackgroundMusic()
+	playBackgroundMusic("JauntyGumption(gum_monster).mp3")
+	
 	play:addEventListener("touch", onPlay)
 	options:addEventListener("touch", onOptions)
 	level1:addEventListener("touch", onLevel1)
 	level2:addEventListener("touch", onLevel2)
+	level3:addEventListener("touch", onLevel3)
+	level4:addEventListener("touch", onLevel4)
 	
 	
 	group:insert(play)
 	group:insert(options)
 	group:insert(level1)
 	group:insert(level2)
+	group:insert(level3)
+	group:insert(level4)
+	
 
 end
 scene:addEventListener( "createScene", scene )
